@@ -39,6 +39,7 @@ FMAX                    = 4
     }
 }
 
+
 #bankdef ucode_zc {
     #bits 32
     #size OPMAX*UMAX
@@ -66,7 +67,6 @@ FMAX                    = 4
     #fill
     #outp OPMAX*UMAX*3*32
 }
-
 
 
 #bank ucode_zc
