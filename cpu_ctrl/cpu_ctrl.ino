@@ -83,7 +83,7 @@ void panic() {
 #define SR_ALU_RD               (1llu << 31llu)     // x
 
 
-u8 read_insn() {
+inline u8 __attribute__((always_inline)) read_insn() {
     u8 res = 0;
     if(digitalRead(INSN0)) res |= 1;
     if(digitalRead(INSN1)) res |= 2;
@@ -96,7 +96,7 @@ u8 read_insn() {
     return res;
 }
 
-u8 read_upc() {
+inline u8 __attribute__((always_inline)) read_upc() {
     u8 res = 0;
     if(digitalRead(UPC0)) res |= 1;
     if(digitalRead(UPC1)) res |= 2;
@@ -105,19 +105,19 @@ u8 read_upc() {
     return res;
 }
 
-u8 read_flags() {
+inline u8 __attribute__((always_inline)) read_flags() {
     u8 f = 0;
     if(digitalRead(FLAGZ)) f |= 1;
     if(digitalRead(FLAGC)) f |= 2;
     return f;
 }
 
-void pulse_clk() {
+inline void __attribute__((always_inline)) pulse_clk() {
     digitalWrite(CPU_CLK, HIGH);
     digitalWrite(CPU_CLK, LOW);
 }
 
-void write_sr(u32 x) {
+inline void __attribute__((always_inline)) write_sr(u32 x) {
     digitalWrite(CTRL_LAT, LOW);
     shiftOut(CTRL_DAT, CTRL_CLK, MSBFIRST, x & 0xFF);
     shiftOut(CTRL_DAT, CTRL_CLK, MSBFIRST, (x & 0x0000FF00) >> 8);
@@ -126,12 +126,12 @@ void write_sr(u32 x) {
     digitalWrite(CTRL_LAT, HIGH);
 }
 
-void pulse_sr(u32 x) {
+inline void __attribute__((always_inline)) pulse_sr(u32 x) {
     write_sr(x);
     pulse_clk();
 }
 
-void reset() {
+inline void __attribute__((always_inline)) reset() {
     digitalWrite(CTRL_CLR, LOW);
     digitalWrite(CTRL_CLR, LOW);
     digitalWrite(CPU_RST, LOW);
@@ -155,19 +155,21 @@ void reset() {
 #define OP_ADDM         0x05
 #define OP_SUBI         0x06
 #define OP_SUBM         0x07
-//#define OP_ADCI
-//#define OP_ADCM
-//#define OP_SBCI
-//#define OP_SBCM
 
 #define OP_CMPI         0x08
 #define OP_CMPM         0x09
 
 #define OP_JMP          0x0A
-#define OP_JZ           0x0B
-#define OP_JC           0x0C
-#define OP_JNZ          0x0D
-#define OP_JNC          0x0E
+
+#define OP_ADCI         0x0B
+#define OP_ADCM         0x0C
+#define OP_SBCI         0x0D
+#define OP_SBCM         0x0E
+
+#define OP_JZ           0x0F
+#define OP_JC           0x10
+#define OP_JNZ          0x11
+#define OP_JNC          0x12
 
 
 #define OPMAX           24
@@ -180,7 +182,7 @@ const PROGMEM u8 ucode[4*OPMAX*16*4] = {
 #define get_uinsn(i, u, f) (get_uinsn_b(i, u, f, 3) | (get_uinsn_b(i, u, f, 2) << 8llu) | (get_uinsn_b(i, u, f, 1) << 16llu) | (get_uinsn_b(i, u, f, 0) << 24llu))
 
 
-void cycle() {
+inline void __attribute__((always_inline)) cycle() {
     delay(10);
 
     u8 insn     = read_insn();
@@ -193,12 +195,13 @@ void cycle() {
 }
 
 
-void load_code() {
-    u8 code[] = {
+const PROGMEM u8 code[] = {
 #include "program.h"
-    };
+};
+
+inline void __attribute__((always_inline)) load_code() {
     for(u16 i = 0; i < sizeof(code); i++) {
-        pulse_sr(code[i] | SR_D_RD | SR_PC_RD | SR_RAM_WR);
+        pulse_sr(pgm_read_byte(code + i) | SR_D_RD | SR_PC_RD | SR_RAM_WR);
         pulse_sr(SR_PC_INC);
     }
 }
