@@ -16,9 +16,9 @@
 
     jmp {addr: u16}         => 0x0A @ addr
 
-    adc #{imm: u8}           => 0x0B @ imm
+    adc #{imm: u8}          => 0x0B @ imm
     adc [{addr: u16}]       => 0x0C @ addr
-    sbc #{imm: u8}           => 0x0D @ imm
+    sbc #{imm: u8}          => 0x0D @ imm
     sbc [{addr: u16}]       => 0x0E @ addr
     
     jz {addr: u16}          => 0x0F @ addr

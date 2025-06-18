@@ -69,6 +69,74 @@ FMAX                    = 4
 }
 
 
+#ruledef {
+    i_ld_mar_no_inc => asm {
+        uinsn pc_rd | ram_rd | d_to_mar_hi | mar_hi_ld
+        uinsn pc_inc
+        uinsn pc_rd | ram_rd | d_to_mar_lo | mar_lo_ld
+    }
+
+
+    i_jskip => asm {
+        fetch
+        i_ld_mar_no_inc
+        urst pc_inc
+    }
+    i_jtake => asm {
+        fetch
+        i_ld_mar_no_inc
+        urst mar_rd | pc_ld
+    }
+
+
+    i_adci 0 => asm {
+        fetch
+        uinsn pc_rd | ram_rd | b_ld
+        urst pc_inc | alu_rd | a_ld | flags_ld
+    }
+    i_adcm 0 => asm {
+        fetch
+        i_ld_mar_no_inc
+        uinsn pc_inc | mar_rd | ram_rd | b_ld
+        urst alu_rd | a_ld | flags_ld
+    }
+    i_sbci 0 => asm {
+        fetch
+        uinsn pc_rd | ram_rd | b_ld
+        urst pc_inc | alu_xorb | alu_rd | a_ld | flags_ld
+    }
+    i_sbcm 0 => asm {
+        fetch
+        i_ld_mar_no_inc
+        uinsn pc_inc | mar_rd | ram_rd | b_ld
+        urst alu_xorb | alu_rd | a_ld | flags_ld
+    }
+
+    i_adci 1 => asm {
+        fetch
+        uinsn pc_rd | ram_rd | b_ld
+        urst pc_inc | alu_ci | alu_rd | a_ld | flags_ld
+    }
+    i_adcm 1 => asm {
+        fetch
+        i_ld_mar_no_inc
+        uinsn pc_inc | mar_rd | ram_rd | b_ld
+        urst alu_ci | alu_rd | a_ld | flags_ld
+    }
+    i_sbci 1 => asm {
+        fetch
+        uinsn pc_rd | ram_rd | b_ld
+        urst pc_inc | alu_ci | alu_xorb | alu_rd | a_ld | flags_ld
+    }
+    i_sbcm 1 => asm {
+        fetch
+        i_ld_mar_no_inc
+        uinsn pc_inc | mar_rd | ram_rd | b_ld
+        urst alu_ci | alu_xorb | alu_rd | a_ld | flags_ld
+    }
+}
+
+
 #bank ucode_zc
 zc:
 #include "ucode_base.asm"

@@ -8,7 +8,7 @@
                 sbc #0x00
                 sta y
 
-                lda x
+                lda y
 
 loop:           jmp loop
 
