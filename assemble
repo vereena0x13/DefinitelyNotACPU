@@ -1,2 +1,0 @@
-#!/bin/bash
-customasm -f hexcomma -o "out/$1.txt" "$1.asm" && cat "out/$1.txt" | xclip -selection c
