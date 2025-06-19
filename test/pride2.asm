@@ -61,10 +61,8 @@ l0:                 lda [ptr]
                     cmp #14
                     jnz l0
 
-
                     lda #0xC1
                     sta LCDCMD
-
 
                     stz i
 l1:                 lda [ptr]

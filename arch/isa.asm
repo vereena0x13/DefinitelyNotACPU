@@ -2,12 +2,10 @@
     nop                     => 0x00
 
     ldz                     => 0x01
-    stz #{addr: u16}        => 0x02 @ addr
     stz {addr: u16}         => 0x02 @ addr
 
     lda #{imm: u8}          => 0x03 @ imm
     lda {addr: u16}         => 0x04 @ addr
-    sta #{addr: u16}        => 0x05 @ addr
     sta {addr: u16}         => 0x05 @ addr
 
     add #{imm: u8}          => 0x06 @ imm
