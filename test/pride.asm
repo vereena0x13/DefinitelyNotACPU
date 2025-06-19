@@ -15,11 +15,11 @@ LCDDAT              = 0x7F01
                     lda #0x01
                     sta LCDCMD
 
-                    lda #0x80
+                    lda #0x81
                     sta LCDCMD
 
-                    lda #" "
-                    sta LCDDAT
+                    ;lda #" "
+                    ;sta LCDDAT
                     lda #"H"
                     sta LCDDAT
                     lda #"A"
@@ -49,11 +49,11 @@ LCDDAT              = 0x7F01
                     lda #"Y"
                     sta LCDDAT
 
-                    lda #0xC0
+                    lda #0xC1
                     sta LCDCMD
 
-                    lda #" "
-                    sta LCDDAT
+                    ;lda #" "
+                    ;sta LCDDAT
                     lda #"F"
                     sta LCDDAT
                     lda #"E"
@@ -83,10 +83,10 @@ LCDDAT              = 0x7F01
                     lda #"S"
                     sta LCDDAT
 
-loop:               #res 16
+loop:               #res 20
                     lda #0x08
                     sta LCDCMD
-                    #res 16
+                    #res 20
                     lda #0x0C
                     sta LCDCMD
                     jmp loop
