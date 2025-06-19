@@ -10,7 +10,7 @@ cpu_ctrl: ucode asm
 	arduino-cli compile -b arduino:avr:nano --library cpu_ctrl cpu_ctrl
 
 ucode:
-	customasm -f hexcomma -o cpu_ctrl/ucode.h isa/ucode.asm
+	customasm -f hexcomma -o cpu_ctrl/ucode.h arch/ucode.asm
 
 asm:
 	customasm -f hexcomma -o "cpu_ctrl/program.h" "test/${PROGRAM}.asm"

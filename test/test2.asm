@@ -1,4 +1,4 @@
-#include "../isa/arch.asm"
+#include "../arch/isa.asm"
 
 
                 lda x
