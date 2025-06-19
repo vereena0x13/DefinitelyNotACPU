@@ -145,33 +145,6 @@ inline void __attribute__((always_inline)) reset() {
 }
 
 
-#define OP_NOP          0x00
-
-#define OP_LDAI         0x01
-#define OP_LDAM         0x02
-#define OP_STA          0x03
-
-#define OP_ADDI         0x04
-#define OP_ADDM         0x05
-#define OP_SUBI         0x06
-#define OP_SUBM         0x07
-
-#define OP_CMPI         0x08
-#define OP_CMPM         0x09
-
-#define OP_JMP          0x0A
-
-#define OP_ADCI         0x0B
-#define OP_ADCM         0x0C
-#define OP_SBCI         0x0D
-#define OP_SBCM         0x0E
-
-#define OP_JZ           0x0F
-#define OP_JC           0x10
-#define OP_JNZ          0x11
-#define OP_JNC          0x12
-
-
 #define OPMAX           24
 
 const PROGMEM u8 ucode[4*OPMAX*16*4] = {

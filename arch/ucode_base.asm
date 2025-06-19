@@ -2,7 +2,17 @@
 .nop:                   uinsn pc_rd | ram_rd | ir_ld
                         urst pc_inc
 
-                        
+
+#align UMAX*32          
+.ldz:                   fetch
+                        urst a_ld
+
+#align UMAX*32
+.stz:                   fetch
+                        i_ld_mar_no_inc
+                        urst pc_inc | mar_rd | ram_wr
+
+
 #align UMAX*32
 .ldai:                  fetch
                         uinsn pc_rd | ram_rd | a_ld

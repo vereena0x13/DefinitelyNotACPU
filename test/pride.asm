@@ -18,8 +18,6 @@ LCDDAT              = 0x7F01
                     lda #0x81
                     sta LCDCMD
 
-                    ;lda #" "
-                    ;sta LCDDAT
                     lda #"H"
                     sta LCDDAT
                     lda #"A"
@@ -52,8 +50,6 @@ LCDDAT              = 0x7F01
                     lda #0xC1
                     sta LCDCMD
 
-                    ;lda #" "
-                    ;sta LCDDAT
                     lda #"F"
                     sta LCDDAT
                     lda #"E"
