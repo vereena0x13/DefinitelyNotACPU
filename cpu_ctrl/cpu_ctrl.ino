@@ -117,31 +117,26 @@ inline void __attribute__((always_inline)) pulse_clk() {
     digitalWrite(CPU_CLK, LOW);
 }
 
-inline void __attribute__((always_inline)) write_sr(u32 x) {
+inline void __attribute__((always_inline)) write_sr(u8 a, u8 b, u8 c, u8 d) {
     digitalWrite(CTRL_LAT, LOW);
-    shiftOut(CTRL_DAT, CTRL_CLK, MSBFIRST, x & 0xFF);
-    shiftOut(CTRL_DAT, CTRL_CLK, MSBFIRST, (x & 0x0000FF00) >> 8);
-    shiftOut(CTRL_DAT, CTRL_CLK, MSBFIRST, (x & 0x00FF0000) >> 16);
-    shiftOut(CTRL_DAT, CTRL_CLK, MSBFIRST, (x & 0xFF000000) >> 24);
+    shiftOut(CTRL_DAT, CTRL_CLK, MSBFIRST, a);
+    shiftOut(CTRL_DAT, CTRL_CLK, MSBFIRST, b);
+    shiftOut(CTRL_DAT, CTRL_CLK, MSBFIRST, c);
+    shiftOut(CTRL_DAT, CTRL_CLK, MSBFIRST, d);
     digitalWrite(CTRL_LAT, HIGH);
 }
 
-inline void __attribute__((always_inline)) pulse_sr(u32 x) {
-    write_sr(x);
+inline void __attribute__((always_inline)) write_sr(u32 x) {
+    write_sr(x & 0xFF, (x & 0x0000FF00) >> 8, (x & 0x00FF0000) >> 16, (x & 0xFF000000) >> 24);
+}
+
+inline void __attribute__((always_inline)) pulse_sr(u8 a, u8 b, u8 c, u8 d) {
+    write_sr(a, b, c, d);
     pulse_clk();
 }
 
-inline void __attribute__((always_inline)) reset() {
-    digitalWrite(CTRL_CLR, LOW);
-    digitalWrite(CTRL_CLR, LOW);
-    digitalWrite(CPU_RST, LOW);
-    delay(1);
-    digitalWrite(CTRL_CLR, HIGH);
-    digitalWrite(CTRL_CLR, HIGH);
-    digitalWrite(CPU_RST, HIGH);
-
-    pulse_sr(0x00 | SR_D_RD | SR_MAR_LO_LD | SR_MAR_HI_LD | SR_D_TO_MAR_LO | SR_D_TO_MAR_HI | SR_IR_LD | SR_A_LD | SR_B_LD | SR_UPC_RST);
-    write_sr(0);
+inline void __attribute__((always_inline)) pulse_sr(u32 x) {
+    pulse_sr(x & 0xFF, (x & 0x0000FF00) >> 8, (x & 0x00FF0000) >> 16, (x & 0xFF000000) >> 24);
 }
 
 
@@ -153,8 +148,7 @@ const PROGMEM u8 ucode[FMAX*OPMAX*UMAX*4] = {
 #include "ucode.h"
 };
 
-#define get_uinsn_b(i, u, f, b) ((u32)pgm_read_byte(ucode + f*OPMAX*UMAX*4 + i*UMAX*4 + u*4 + b))
-#define get_uinsn(i, u, f) (get_uinsn_b(i, u, f, 3) | (get_uinsn_b(i, u, f, 2) << 8llu) | (get_uinsn_b(i, u, f, 1) << 16llu) | (get_uinsn_b(i, u, f, 0) << 24llu))
+#define get_uinsn_b(i, u, f, b) pgm_read_byte(ucode + f*OPMAX*UMAX*4 + i*UMAX*4 + u*4 + b)
 
 
 inline void __attribute__((always_inline)) cycle() {
@@ -165,8 +159,12 @@ inline void __attribute__((always_inline)) cycle() {
     
     u8 upc      = read_upc();
     u8 flags    = read_flags();
-    u32 uinsn   = get_uinsn(insn, upc, flags);
-    pulse_sr(uinsn);
+    pulse_sr(
+        get_uinsn_b(insn, upc, flags, 3),
+        get_uinsn_b(insn, upc, flags, 2),
+        get_uinsn_b(insn, upc, flags, 1),
+        get_uinsn_b(insn, upc, flags, 0)
+    );
 }
 
 
@@ -179,6 +177,20 @@ inline void __attribute__((always_inline)) load_code() {
         pulse_sr(pgm_read_byte(code + i) | SR_D_RD | SR_PC_RD | SR_RAM_WR);
         pulse_sr(SR_PC_INC);
     }
+}
+
+
+inline void __attribute__((always_inline)) reset() {
+    digitalWrite(CTRL_CLR, LOW);
+    digitalWrite(CTRL_CLR, LOW);
+    digitalWrite(CPU_RST, LOW);
+    delay(1);
+    digitalWrite(CTRL_CLR, HIGH);
+    digitalWrite(CTRL_CLR, HIGH);
+    digitalWrite(CPU_RST, HIGH);
+
+    pulse_sr(0x00 | SR_D_RD | SR_MAR_LO_LD | SR_MAR_HI_LD | SR_D_TO_MAR_LO | SR_D_TO_MAR_HI | SR_IR_LD | SR_A_LD | SR_B_LD | SR_UPC_RST);
+    write_sr(0);
 }
 
 
