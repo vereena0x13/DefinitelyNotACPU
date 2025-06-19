@@ -24,7 +24,7 @@ upc_inc                 = 1 << 30
 alu_rd                  = 1 << 31
 
 
-OPMAX                   = 24
+OPMAX                   = 32
 UMAX                    = 16
 FMAX                    = 4
 

@@ -145,18 +145,20 @@ inline void __attribute__((always_inline)) reset() {
 }
 
 
-#define OPMAX           24
+#define OPMAX           32
+#define UMAX            16
+#define FMAX            4
 
-const PROGMEM u8 ucode[4*OPMAX*16*4] = {
+const PROGMEM u8 ucode[FMAX*OPMAX*UMAX*4] = {
 #include "ucode.h"
 };
 
-#define get_uinsn_b(i, u, f, b) ((u32)pgm_read_byte(ucode + f*OPMAX*16*4 + i*16*4 + u*4 + b))
+#define get_uinsn_b(i, u, f, b) ((u32)pgm_read_byte(ucode + f*OPMAX*UMAX*4 + i*UMAX*4 + u*4 + b))
 #define get_uinsn(i, u, f) (get_uinsn_b(i, u, f, 3) | (get_uinsn_b(i, u, f, 2) << 8llu) | (get_uinsn_b(i, u, f, 1) << 16llu) | (get_uinsn_b(i, u, f, 0) << 24llu))
 
 
 inline void __attribute__((always_inline)) cycle() {
-    delay(10);
+    //delay(10);
 
     u8 insn     = read_insn();
     if(insn >= OPMAX) panic();
