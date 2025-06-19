@@ -13,4 +13,4 @@ ucode:
 	customasm -f hexcomma -o cpu_ctrl/ucode.h arch/ucode.asm
 
 asm:
-	customasm -f hexcomma -o "cpu_ctrl/program.h" "test/${PROGRAM}.asm"
+	customasm -f hexcomma -o cpu_ctrl/program.h "test/${PROGRAM}.asm"
