@@ -1,0 +1,4 @@
+ - change the bit shift inputs from B to A so we don't have to copy A into B to shift it
+ - remove the bitwise not function from the PLD logic
+ - allow loading (and perhaps setting and clearing too, probably) the Z and C flags individually
+    - Z flag should be touched by and, or, xor, but C shouldn't 

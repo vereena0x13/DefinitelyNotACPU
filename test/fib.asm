@@ -32,10 +32,51 @@
 }
 
 
-                    lcd_init
-                    lcd_clear
-                    lcd_goto 0, 0
+                    ;lcd_init
+                    ;lcd_clear
+                    ;lcd_goto 0, 0
 
 
+                    ;lda #0xFF
+                    ;and #0b11010110
+                    ;lda #0b10000010
+                    ;or #0b00101100
+                    ;lda #0xFF
+                    ;xor #0b01101110
 
-loop:               jmp loop
+
+                    lda #0x01
+
+a:                  #res 256
+                    lsh
+                    #res 256
+                    lsh
+                    #res 256
+                    lsh
+                    #res 256
+                    lsh
+                    #res 256
+                    lsh
+                    #res 256
+                    lsh
+                    #res 256
+                    lsh
+                    #res 256
+                    rsh
+                    #res 256
+                    rsh
+                    #res 256
+                    rsh
+                    #res 256
+                    rsh
+                    #res 256
+                    rsh
+                    #res 256
+                    rsh
+                    #res 256
+                    rsh
+                    jmp a
+
+
+loop:               #res 64
+                    jmp loop

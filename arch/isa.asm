@@ -20,26 +20,22 @@ op_cmpm                     = 0x0B
 ; op_                         = 0x0E
 ; op_                         = 0x0F
 
-; xx00  =>  lsh                         
-; xx01  =>  rsh               
-; xx10  =>  bit    
-; xx10  =>  bit            
-op_lshi                     = 0x10          ; 0000 
-op_lshm                     = 0x18          ; 1000
-op_rshi                     = 0x11          ; 0001
-op_rshm                     = 0x19          ; 1001
-op_andi                     = 0x12          ; 0010
-op_andm                     = 0x16          ; 0110
-op_ori                      = 0x1A          ; 1010 
-op_orm                      = 0x1E          ; 1110 
-op_xori                     = 0x13          ; 0011
-op_xorm                     = 0x17          ; 0111
-op_not                      = 0x1B          ; 1011 
-; op_                         = 0x14
-; op_                         = 0x15
-; op_                         = 0x1C
-; op_                         = 0x1D
-; op_                         = 0x1F
+op_lshi                     = 0x10          ; 0000  xx00  =>  lsh
+op_rshi                     = 0x11          ; 0001  xx01  =>  rsh
+op_andi                     = 0x12          ; 0010  xx10  =>  bit
+op_xori                     = 0x13          ; 0011  xx11  =>  bit
+op_lsh                      = 0x14          ; 0100  xx00  =>  lsh
+op_rsh                      = 0x15          ; 0101  xx01  =>  rsh
+op_andm                     = 0x16          ; 0110  xx10  =>  bit
+op_xorm                     = 0x17          ; 0111  xx11  =>  bit
+op_lshm                     = 0x18          ; 1000  xx00  =>  lsh
+op_rshm                     = 0x19          ; 1001  xx01  =>  rsh
+op_ori                      = 0x1A          ; 1010  xx10  =>  bit
+; op_                         = 0x1B          ; 1011  xx11  =>  bit
+; op_                         = 0x1C          ; 1100  xx00  =>  lsh
+; op_                         = 0x1D          ; 1101  xx01  => rsh
+op_orm                      = 0x1E          ; 1110  xx10  =>  bit
+; op_                         = 0x1F          ; 1111  xx11  =>  bit
 
 op_jmp                      = 0x20
 
@@ -74,15 +70,16 @@ op_jnc                      = 0x28
 
     lsh #{imm: u8}          => op_lshi @ imm
     lsh {addr: u16}         => op_lshm @ addr
+    lsh                     => op_lsh
     rsh #{imm: u8}          => op_rshi @ imm
     rsh {addr: u16}         => op_rshm @ addr
+    rsh                     => op_rsh
     and #{imm: u8}          => op_andi @ imm
     and {addr: u16}         => op_andm @ addr
     or #{imm: u8}           => op_ori @ imm
     or {addr: u16}          => op_orm @ addr
     xor #{imm: u8}          => op_xori @ imm
     xor {addr: u16}         => op_xorm @ addr
-    not                     => op_not
 
     jmp {addr: u16}         => op_jmp @ addr
 
