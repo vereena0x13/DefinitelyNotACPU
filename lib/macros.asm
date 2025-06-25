@@ -2,63 +2,63 @@
 
 
 #ruledef {
-    lda [{addr: u16}] => asm {
-        lda {addr}+1
-        sta a+2
-        lda {addr}
-        sta a+1
-a:      lda 0x0000
+    lda [{addr: u16}] => asm {                      ; 30 cy
+        lda {addr}+1                                ; 6
+        sta a+2                                     ; 6
+        lda {addr}                                  ; 6
+        sta a+1                                     ; 6
+a:      lda 0x0000                                  ; 6
     }
 
-    sta [{addr: u16}] => asm {
-        sta a-1
-        lda {addr}+1
-        sta a+2
-        lda {addr}
-        sta a+1
-        lda #0x00
-a:      sta 0x0000
-    }
-
-
-    lda [{addr: u16}], {offset: u16} => asm {
-        lda {addr}+1
-        add #({offset} & 0xFF)
-        sta a+2
-        lda {addr}
-        adc #(({offset} >> 8) & 0xFF)
-        sta a+1
-a:      lda 0x0000
-    }
-
-    sta [{addr: u16}], {offset: u16} => asm {
-        sta a-1
-        lda {addr}+1
-        add #({offset} & 0xFF)
-        sta a+2
-        lda {addr}
-        adc #(({offset} >> 8) & 0xFF)
-        sta a+1
-        lda #0x00
-a:      sta 0x0000
+    sta [{addr: u16}] => asm {                      ; 40 cy
+        sta a-1                                     ; 6
+        lda {addr}+1                                ; 6
+        sta a+2                                     ; 6
+        lda {addr}                                  ; 6
+        sta a+1                                     ; 6
+        lda #0x00                                   ; 4
+a:      sta 0x0000                                  ; 6
     }
 
 
-    inc16 {addr: u16} => asm {
-        lda {addr}+1
-        add #1
-        sta {addr}+1
-        lda {addr}
-        adc #0
-        sta {addr}
+    lda [{addr: u16}], {offset: u16} => asm {       ; 38 cy
+        lda {addr}+1                                ; 6
+        add #({offset} & 0xFF)                      ; 4
+        sta a+2                                     ; 6
+        lda {addr}                                  ; 6
+        adc #(({offset} >> 8) & 0xFF)               ; 4
+        sta a+1                                     ; 6
+a:      lda 0x0000                                  ; 6
     }
 
-    dec16 {addr: u16} => asm {
-        lda {addr}+1
-        sub #1
-        sta {addr}+1
-        lda {addr}
-        sbc #0
-        sta {addr}
+    sta [{addr: u16}], {offset: u16} => asm {       ; 48 cy
+        sta a-1                                     ; 6
+        lda {addr}+1                                ; 6
+        add #({offset} & 0xFF)                      ; 4
+        sta a+2                                     ; 6
+        lda {addr}                                  ; 6
+        adc #(({offset} >> 8) & 0xFF)               ; 4
+        sta a+1                                     ; 6
+        lda #0x00                                   ; 4
+a:      sta 0x0000                                  ; 6
+    }
+
+
+    inc16 {addr: u16} => asm {                      ; 32 cy
+        lda {addr}+1                                ; 6
+        add #1                                      ; 4
+        sta {addr}+1                                ; 6
+        lda {addr}                                  ; 6
+        adc #0                                      ; 4
+        sta {addr}                                  ; 6
+    }
+
+    dec16 {addr: u16} => asm {                      ; 32 cy                                      
+        lda {addr}+1                                ; 6    
+        sub #1                                      ; 4
+        sta {addr}+1                                ; 6    
+        lda {addr}                                  ; 6    
+        sbc #0                                      ; 4
+        sta {addr}                                  ; 6    
     }
 }
