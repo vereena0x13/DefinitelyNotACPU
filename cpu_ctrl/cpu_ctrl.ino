@@ -6,23 +6,6 @@ static_assert(sizeof(u16) == 2);
 static_assert(sizeof(u32) == 4);
 
 
-#define nop() __asm__ __volatile__ ("nop\n\t")
-
-
-#if 0
-#define begin_critical()    \
-    u8 sreg = SREG;         \
-    cli()
-#define end_critical()      \
-    SREG = sreg;
-#define eep() nop(); nop(); nop(); nop()
-#else
-#define begin_critical()
-#define end_critical()
-#define eep()
-#endif
-
-
 void panic(u8 a, u8 b, u8 c) {
     sei();
     for(;;) {
@@ -102,25 +85,20 @@ void panic(u8 a, u8 b, u8 c) {
 
 
 inline u8 __attribute__((always_inline)) read_insn() {
-    u8 res = 0;
+    // NOTE TODO: this version appears to be SLIGHTLY faster, however
+    //            what we really want to do is rearrange our inputs
+    //            such that we can just read the entire 8-bit value
+    //            from one of the ports with a single memory read.
+    u8 res = PIND & 0x3C;
     if(PINC & (1 << 3)) res |= 1;
     if(PINC & (1 << 2)) res |= 2;
-    if(PIND & (1 << 2)) res |= 4;
-    if(PIND & (1 << 3)) res |= 8;
-    if(PIND & (1 << 4)) res |= 16;
-    if(PIND & (1 << 5)) res |= 32;
     if(PINC & (1 << 5)) res |= 64;
     if(PINC & (1 << 4)) res |= 128;
     return res;
 }
 
 inline u8 __attribute__((always_inline)) read_upc() {
-    u8 res = 0;
-    if(PINB & (1 << 0)) res |= 1;
-    if(PINB & (1 << 1)) res |= 2;
-    if(PINB & (1 << 2)) res |= 4;
-    if(PINB & (1 << 3)) res |= 8;
-    return res;
+    return PINB & 0x0F;
 }
 
 inline u8 __attribute__((always_inline)) read_flags() {
@@ -128,67 +106,59 @@ inline u8 __attribute__((always_inline)) read_flags() {
     if(PIND & (1 << 6)) f |= 1;
     if(PIND & (1 << 7)) f |= 2;
     return f;
+    // NOTE TODO: the version below resulted in a lower CPU_CLK frequency?
+    //            well, shifting right by 6 would take 6 clocks, so.. ig there ya go?
+    //            whereas each branch and assignment would be what, 2 or 3 each? so...
+    //            yeah, there ya go ig. will delete this after i'm satisfied.
+    //return (PIND & 0xC0) >> 6;
 }
 
 inline void __attribute__((always_inline)) pulse_clk() {
-    begin_critical();
-    {
-        PORTD |= (1 << 1);
-        eep();
-        PORTD &= ~(1 << 1);
-        eep();
-    }
-    end_critical();
+    PORTD |= (1 << 1);
+    PORTD &= ~(1 << 1);
 }
 
 inline void __attribute__((always_inline)) write_sr(u8 a, u8 b, u8 c, u8 d) {
-    begin_critical();
-    {
-        PORTC |= (1 << 0);
-        #define SO(x, n)                            \
-            if(x & (1 << n))    PORTC |= (1 << 1);  \
-            else                PORTC &= ~(1 << 1); \
-            eep();                                  \
-            PORTB |= (1 << 5);                      \
-            eep();                                  \
-            PORTB &= ~(1 << 5);                     \
-            eep();
-        SO(a, 7)
-        SO(a, 6)
-        SO(a, 5)
-        SO(a, 4)
-        SO(a, 3)
-        SO(a, 2)
-        SO(a, 1)
-        SO(a, 0)
-        SO(b, 7)
-        SO(b, 6)
-        SO(b, 5)
-        SO(b, 4)
-        SO(b, 3)
-        SO(b, 2)
-        SO(b, 1)
-        SO(b, 0)
-        SO(c, 7)
-        SO(c, 6)
-        SO(c, 5)
-        SO(c, 4)
-        SO(c, 3)
-        SO(c, 2)
-        SO(c, 1)
-        SO(c, 0)
-        SO(d, 7)
-        SO(d, 6)
-        SO(d, 5)
-        SO(d, 4)
-        SO(d, 3)
-        SO(d, 2)
-        SO(d, 1)
-        SO(d, 0)
-        #undef SO
-        PORTC &= ~(1 << 0);
-    }
-    end_critical();
+    PORTC |= (1 << 0);
+    #define SO(x, n)                            \
+        if(x & (1 << n))    PORTC |= (1 << 1);  \
+        else                PORTC &= ~(1 << 1); \
+        PORTB |= (1 << 5);                      \
+        PORTB &= ~(1 << 5);
+    SO(a, 7)
+    SO(a, 6)
+    SO(a, 5)
+    SO(a, 4)
+    SO(a, 3)
+    SO(a, 2)
+    SO(a, 1)
+    SO(a, 0)
+    SO(b, 7)
+    SO(b, 6)
+    SO(b, 5)
+    SO(b, 4)
+    SO(b, 3)
+    SO(b, 2)
+    SO(b, 1)
+    SO(b, 0)
+    SO(c, 7)
+    SO(c, 6)
+    SO(c, 5)
+    SO(c, 4)
+    SO(c, 3)
+    SO(c, 2)
+    SO(c, 1)
+    SO(c, 0)
+    SO(d, 7)
+    SO(d, 6)
+    SO(d, 5)
+    SO(d, 4)
+    SO(d, 3)
+    SO(d, 2)
+    SO(d, 1)
+    SO(d, 0)
+    #undef SO
+    PORTC &= ~(1 << 0);
 }
 
 inline void __attribute__((always_inline)) write_sr(u32 x) {
@@ -250,29 +220,23 @@ inline void __attribute__((always_inline)) load_code() {
 
 
 inline void __attribute__((always_inline)) reset() {
-    begin_critical();
-    {
-        digitalWrite(CTRL_CLR, LOW);
-        digitalWrite(CPU_RST, LOW);
-        eep();
-        digitalWrite(CTRL_CLR, HIGH);
-        digitalWrite(CPU_RST, HIGH);
-        eep();
+    digitalWrite(CTRL_CLR, LOW);
+    digitalWrite(CPU_RST, LOW);
+    digitalWrite(CTRL_CLR, HIGH);
+    digitalWrite(CPU_RST, HIGH);
 
 
-        // NOTE TODO: This is _totally_ a _perfectly reasonable_ _engineering-coded_ solution to our flaky reset issue.
-        u8 insn, upc, flags;
-        do {
-            insn    = read_insn();
-            upc     = read_upc();
-            flags   = read_flags();
-            pulse_sr(SR_D_TO_MAR_LO | SR_MAR_LO_LD | SR_D_TO_MAR_HI | SR_MAR_HI_LD | SR_IR_LD | SR_A_LD | SR_B_LD | SR_UPC_RST);
-        } while(insn | upc | flags);
+    // NOTE TODO: This is _totally_ a _perfectly reasonable_ _engineering-coded_ solution to our flaky reset issue.
+    u8 insn, upc, flags;
+    do {
+        insn    = read_insn();
+        upc     = read_upc();
+        flags   = read_flags();
+        pulse_sr(SR_D_TO_MAR_LO | SR_MAR_LO_LD | SR_D_TO_MAR_HI | SR_MAR_HI_LD | SR_IR_LD | SR_A_LD | SR_B_LD | SR_UPC_RST);
+    } while(insn | upc | flags);
 
 
-        write_sr(0);
-    }
-    end_critical();
+    write_sr(0);
 }
 
 
