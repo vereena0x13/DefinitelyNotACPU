@@ -6,29 +6,46 @@ static_assert(sizeof(u16) == 2);
 static_assert(sizeof(u32) == 4);
 
 
+#if 1
 #define begin_critical()    \
     u8 sreg = SREG;         \
     cli()
 #define end_critical()      \
     SREG = sreg;
+#else
+#define begin_critical()
+#define end_critical()
+#endif
+
+#define nop() __asm__ __volatile__ ("nop\n\t")
+#define eep() nop(); nop(); nop(); nop()
 
 
-void panic() {
+void panic(u8 a, u8 b, u8 c) {
+    sei();
     for(;;) {
         for(u8 i = 0; i < 4; i++) {
             digitalWrite(LED_BUILTIN, HIGH);
-            delay(25);
+            delay(a);
             digitalWrite(LED_BUILTIN, LOW);
-            delay(25);
+            delay(a);
         }
 
         digitalWrite(LED_BUILTIN, HIGH);
-        delay(250);
+        delay(b);
         digitalWrite(LED_BUILTIN, LOW);
-        delay(100);
+        delay(c);
     }
 }
 
+
+#define CTRL_CLR                12                  // B4
+#define CTRL_CLK                13                  // B5
+#define CTRL_LAT                14                  // C0
+#define CTRL_DAT                15                  // C1
+
+#define CPU_RST                 0                   // D0
+#define CPU_CLK                 1                   // D1
 
 #define INSN0                   17                  // C3
 #define INSN1                   16                  // C2
@@ -46,14 +63,6 @@ void panic() {
 #define UPC1                    9                   // B1
 #define UPC2                    10                  // B2
 #define UPC3                    11                  // B3
-
-#define CTRL_CLR                12                  // B4
-#define CTRL_CLK                13                  // B5
-#define CTRL_LAT                14                  // C0
-#define CTRL_DAT                15                  // C1
-
-#define CPU_RST                 0                   // D0
-#define CPU_CLK                 1                   // D1
 
 
 #define SR_D0                   (1llu << 0llu)      //
@@ -77,8 +86,8 @@ void panic() {
 #define SR_A_RD                 (1llu << 18llu)     // A            ->  data
 #define SR_A_LD                 (1llu << 19llu)     // A            :=  data
 #define SR_B_LD                 (1llu << 20llu)     // B            :=  data
-#define SR_FLAGS_LD             (1llu << 21llu)     //  
-#define SR_UPC_RST              (1llu << 22llu)     // 
+#define SR_FLAGS_LD             (1llu << 21llu)     //
+#define SR_UPC_RST              (1llu << 22llu)     //
 #define SR_RAM_RD               (1llu << 23llu)     // ram[addr]    -> data
 #define SR_RAM_WR               (1llu << 24llu)     // ram[addr]    := data
 #define SR_IR_LD                (1llu << 25llu)     // IR           := data
@@ -123,7 +132,9 @@ inline void __attribute__((always_inline)) pulse_clk() {
     begin_critical();
     {
         PORTD |= (1 << 1);
+        eep();
         PORTD &= ~(1 << 1);
+        eep();
     }
     end_critical();
 }
@@ -135,8 +146,11 @@ inline void __attribute__((always_inline)) write_sr(u8 a, u8 b, u8 c, u8 d) {
         #define SO(x, n)                            \
             if(x & (1 << n))    PORTC |= (1 << 1);  \
             else                PORTC &= ~(1 << 1); \
+            eep();                                  \
             PORTB |= (1 << 5);                      \
-            PORTB &= ~(1 << 5);
+            eep();                                  \
+            PORTB &= ~(1 << 5);                     \
+            eep();
         SO(a, 7)
         SO(a, 6)
         SO(a, 5)
@@ -207,11 +221,9 @@ const PROGMEM u8 ucode[FMAX*OPMAX*UMAX*4] = {
 
 
 inline void __attribute__((always_inline)) cycle() {
-    //delay(10);
-
     u8 insn     = read_insn();
-    if(insn >= OPMAX) panic();
-    
+    if(insn >= OPMAX) panic(25, 250, 100);
+
     u8 upc      = read_upc();
     u8 flags    = read_flags();
     pulse_sr(
@@ -236,19 +248,47 @@ inline void __attribute__((always_inline)) load_code() {
 
 
 inline void __attribute__((always_inline)) reset() {
-    digitalWrite(CTRL_CLR, LOW);
-    digitalWrite(CPU_RST, LOW);
-    delay(1);
-    digitalWrite(CTRL_CLR, HIGH);
-    digitalWrite(CPU_RST, HIGH);
-    delay(1);
+    begin_critical();
+    {
+        digitalWrite(CTRL_CLR, LOW);
+        digitalWrite(CPU_RST, LOW);
+        eep();
+        digitalWrite(CTRL_CLR, HIGH);
+        digitalWrite(CPU_RST, HIGH);
+        eep();
 
-    pulse_sr(0x00 | SR_D_RD | SR_MAR_LO_LD | SR_MAR_HI_LD | SR_D_TO_MAR_LO | SR_D_TO_MAR_HI | SR_IR_LD | SR_A_LD | SR_B_LD | SR_UPC_RST);
-    write_sr(0);
+
+        // NOTE TODO: This is _totally_ a _perfectly reasonable_ _engineering-coded_ solution to our flaky reset issue.
+        u8 insn, upc, flags;
+        do {
+            insn    = read_insn();
+            upc     = read_upc();
+            flags   = read_flags();
+            pulse_sr(SR_D_TO_MAR_LO | SR_MAR_LO_LD | SR_D_TO_MAR_HI | SR_MAR_HI_LD | SR_IR_LD | SR_A_LD | SR_B_LD | SR_UPC_RST);
+        } while(insn | upc | flags);
+
+
+        write_sr(0);
+    }
+    end_critical();
 }
 
 
 void setup() {
+    pinMode(CTRL_CLR, OUTPUT);
+    pinMode(CTRL_CLK, OUTPUT);
+    pinMode(CTRL_LAT, OUTPUT);
+    pinMode(CTRL_DAT, OUTPUT);
+    digitalWrite(CTRL_CLR, HIGH);
+    digitalWrite(CTRL_CLK, LOW);
+    digitalWrite(CTRL_LAT, LOW);
+    digitalWrite(CTRL_DAT, LOW);
+
+    pinMode(CPU_RST, OUTPUT);
+    pinMode(CPU_CLK, OUTPUT);
+    digitalWrite(CPU_RST, HIGH);
+    digitalWrite(CPU_CLK, LOW);
+
     pinMode(INSN0, INPUT);
     pinMode(INSN1, INPUT);
     pinMode(INSN2, INPUT);
@@ -264,50 +304,12 @@ void setup() {
     pinMode(UPC2, INPUT);
     pinMode(UPC3, INPUT);
 
-    pinMode(CTRL_CLR, OUTPUT);
-    pinMode(CTRL_CLK, OUTPUT);
-    pinMode(CTRL_LAT, OUTPUT);
-    pinMode(CTRL_DAT, OUTPUT);
-    digitalWrite(CTRL_CLK, LOW);
-    digitalWrite(CTRL_LAT, LOW);
-
-    pinMode(CPU_RST, OUTPUT);
-    pinMode(CPU_CLK, OUTPUT);
-    digitalWrite(CPU_RST, HIGH);
-    digitalWrite(CPU_CLK, LOW);
-
     reset();
     load_code();
     reset();
 
-#if 0
-    u32 N = 500;
-    //write_sr(SR_D_RD); delay(N);
-    //write_sr(SR_ALU_CI); delay(N);
-    //write_sr(SR_ALU_XORB); delay(N);
-    //write_sr(SR_2); delay(N);
-    //write_sr(SR_PC_RD); delay(N);
-    //write_sr(SR_PC_INC); delay(N);
-    //write_sr(SR_PC_LD); delay(N);
-    //write_sr(SR_MAR_RD); delay(N);
-    //write_sr(SR_MAR_LO_LD); delay(N);
-    //write_sr(SR_MAR_HI_LD); delay(N);
-    write_sr(SR_A_RD); delay(N);
-    write_sr(SR_A_LD); delay(N);
-    write_sr(SR_B_LD); delay(N);
-    write_sr(SR_FLAGS_LD); delay(N);
-    write_sr(SR_UPC_RST); delay(N);
-    write_sr(SR_RAM_RD); delay(N);
-    write_sr(SR_RAM_WR); delay(N);
-    write_sr(SR_IR_LD); delay(N);
-    write_sr(SR_ADDR_LO_TO_D); delay(N);
-    write_sr(SR_ADDR_HI_TO_D); delay(N);
-    write_sr(SR_D_TO_MAR_LO); delay(N);
-    write_sr(SR_D_TO_MAR_HI); delay(N);
-    write_sr(SR_UPC_INC); delay(N);
-    write_sr(SR_ALU_RD); delay(N);
-    reset();
-#endif
+    //cli();
+    sei();
 }
 
 void loop() {
