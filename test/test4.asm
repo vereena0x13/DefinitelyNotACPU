@@ -16,9 +16,10 @@ start:                  lcd_init
                         lcd_goto 0, 0
                         
 
-                        lda #1
+                        lda #0b01001011
+                        push
                         call foo
-                        lda #2
+                        pop
 
                         
 l00p5ever:              #res 64
@@ -27,6 +28,7 @@ l00p5ever:              #res 64
 
 
 
-foo:                    lda #0x33
+foo:                    lda [sp], 3
+                        lsh
+                        sta [sp], 3
                         ret
-                        

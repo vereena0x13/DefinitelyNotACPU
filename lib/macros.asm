@@ -20,6 +20,30 @@ a:      lda 0x0000
 a:      sta 0x0000
     }
 
+
+    lda [{addr: u16}], {offset: u16} => asm {
+        lda {addr}+1
+        add #({offset} & 0xFF)
+        sta a+2
+        lda {addr}
+        adc #(({offset} >> 8) & 0xFF)
+        sta a+1
+a:      lda 0x0000
+    }
+
+    sta [{addr: u16}], {offset: u16} => asm {
+        sta a-1
+        lda {addr}+1
+        add #({offset} & 0xFF)
+        sta a+2
+        lda {addr}
+        adc #(({offset} >> 8) & 0xFF)
+        sta a+1
+        lda #0x00
+a:      sta 0x0000
+    }
+
+
     inc16 {addr: u16} => asm {
         lda {addr}+1
         add #1
