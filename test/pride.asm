@@ -1,88 +1,51 @@
 #include "../arch/isa.asm"
+#include "../lib/macros.asm"
+#include "../lib/lcd.asm"
 
 
-LCDCMD              = 0x7F00
-LCDDAT              = 0x7F01
+
+                    lcd_init
+                    lcd_clear
+
+                    lcd_goto 1, 0
+
+                    stz i
+l0:                 lda [ptr]
+                    sta LCDDAT
+                    lcd_delay
+                    inc16 ptr
+                    lda i
+                    add #1
+                    sta i
+                    cmp #14
+                    jnz l0
+
+                    lcd_goto 1, 1
+                    stz i
+l1:                 lda [ptr]
+                    sta LCDDAT
+                    lcd_delay
+                    inc16 ptr
+                    lda i
+                    add #1
+                    sta i
+                    cmp #14
+                    jnz l1
 
 
-                    lda #0x38
-                    sta LCDCMD
-                    lda #0x06
-                    sta LCDCMD
-                    lda #0x0C
-                    sta LCDCMD
-
-                    lda #0x01
-                    sta LCDCMD
-
-                    lda #0x81
-                    sta LCDCMD
-
-                    lda #"H"
-                    sta LCDDAT
-                    lda #"A"
-                    sta LCDDAT
-                    lda #"P"
-                    sta LCDDAT
-                    lda #"P"
-                    sta LCDDAT
-                    lda #"Y"
-                    sta LCDDAT
-                    lda #" "
-                    sta LCDDAT
-                    lda #"P"
-                    sta LCDDAT
-                    lda #"R"
-                    sta LCDDAT
-                    lda #"I"
-                    sta LCDDAT
-                    lda #"D"
-                    sta LCDDAT
-                    lda #"E"
-                    sta LCDDAT
-                    lda #" "
-                    sta LCDDAT
-                    lda #"M"
-                    sta LCDDAT
-                    lda #"Y"
-                    sta LCDDAT
-
-                    lda #0xC1
-                    sta LCDCMD
-
-                    lda #"F"
-                    sta LCDDAT
-                    lda #"E"
-                    sta LCDDAT
-                    lda #"L"
-                    sta LCDDAT
-                    lda #"L"
-                    sta LCDDAT
-                    lda #"O"
-                    sta LCDDAT
-                    lda #"W"
-                    sta LCDDAT
-                    lda #" "
-                    sta LCDDAT
-                    lda #"F"
-                    sta LCDDAT
-                    lda #"A"
-                    sta LCDDAT
-                    lda #"G"
-                    sta LCDDAT
-                    lda #"G"
-                    sta LCDDAT
-                    lda #"O"
-                    sta LCDDAT
-                    lda #"T"
-                    sta LCDDAT
-                    lda #"S"
-                    sta LCDDAT
-
-loop:               #res 20
+                    N = 4096
+loop:               #res N
                     lda #0x08
                     sta LCDCMD
-                    #res 20
+                    lcd_delay
+                    #res N
                     lda #0x0C
                     sta LCDCMD
+                    lcd_delay
                     jmp loop
+
+
+i:                  #d8 0
+ptr:                #d16 line1
+line1:              #d "HAPPY PRIDE MY"
+line2:              #d "FELLOW FAGGOTS"
