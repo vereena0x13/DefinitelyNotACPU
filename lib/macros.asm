@@ -4,20 +4,20 @@
 #ruledef {
     lda [{addr: u16}] => asm {
         lda {addr}
-        sta $+10
+        sta a+2
         lda {addr}+1
-        sta $+5
-        lda 0x0000
+        sta a+1
+a:      lda 0x0000
     }
 
     sta [{addr: u16}] => asm {
-        sta $+16
+        sta a-1
         lda {addr}
-        sta $+12
+        sta a+2
         lda {addr}+1
-        sta $+7
+        sta a+1
         lda #0x00
-        sta 0x0000
+a:      sta 0x0000
     }
 
     inc16 {addr: u16} => asm {
