@@ -16,7 +16,7 @@ start:                  lcd_init
                         lcd_goto 0, 0
                         
 
-                        lda #13
+                        lda #9
                         push
                         call fib
                         pop

@@ -8,14 +8,14 @@ FLAG_C                  = 0
 
 
 #bankdef ucode {
-    #bits 32
-    #size OPMAX*UMAX
+    #bits 8
+    #size OPMAX*UMAX*4
     #fill
     #outp 0
 }
 
 
-#fn opaddr(op)          => op*UMAX
+#fn opaddr(op)          => op*UMAX*4
 
 #ruledef ucode {
     uinsn {uops: u32}   => (uops | upc_inc)`32
