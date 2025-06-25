@@ -5,17 +5,6 @@ FLAG_Z                  = 0
 FLAG_C                  = 0
 
 
-#bankdef ucode {
-    #bits 32
-    #size OPMAX*UMAX
-    #fill
-    #outp 0
-}
-
-
-#fn opaddr(op)          => op*UMAX
-
-
 d0                      = 1 << 0
 d1                      = 1 << 1
 d2                      = 1 << 2
@@ -53,6 +42,17 @@ alu_bit_and             = 0
 alu_bit_or              = alu_xorb
 alu_bit_xor             = alu_ci
 alu_bit_not             = alu_xorb | alu_ci
+
+
+#bankdef ucode {
+    #bits 32
+    #size OPMAX*UMAX
+    #fill
+    #outp 0
+}
+
+
+#fn opaddr(op)          => op*UMAX
 
 
 #ruledef ucode {
