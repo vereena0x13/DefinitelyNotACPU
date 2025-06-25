@@ -6,6 +6,13 @@ static_assert(sizeof(u16) == 2);
 static_assert(sizeof(u32) == 4);
 
 
+#define begin_critical()    \
+    u8 sreg = SREG;         \
+    cli()
+#define end_critical()      \
+    SREG = sreg;
+
+
 void panic() {
     for(;;) {
         for(u8 i = 0; i < 4; i++) {
@@ -23,30 +30,30 @@ void panic() {
 }
 
 
-#define INSN0                   17
-#define INSN1                   16
-#define INSN2                   2
-#define INSN3                   3
-#define INSN4                   4
-#define INSN5                   5
-#define INSN6                   19
-#define INSN7                   18
+#define INSN0                   17                  // C3
+#define INSN1                   16                  // C2
+#define INSN2                   2                   // D2
+#define INSN3                   3                   // D3
+#define INSN4                   4                   // D4
+#define INSN5                   5                   // D5
+#define INSN6                   19                  // C5
+#define INSN7                   18                  // C4
 
-#define FLAGZ                   6
-#define FLAGC                   7
+#define FLAGZ                   6                   // D6
+#define FLAGC                   7                   // D7
 
-#define UPC0                    8
-#define UPC1                    9
-#define UPC2                    10
-#define UPC3                    11
+#define UPC0                    8                   // B0
+#define UPC1                    9                   // B1
+#define UPC2                    10                  // B2
+#define UPC3                    11                  // B3
 
-#define CTRL_CLR                12
-#define CTRL_CLK                13
-#define CTRL_LAT                14
-#define CTRL_DAT                15
+#define CTRL_CLR                12                  // B4
+#define CTRL_CLK                13                  // B5
+#define CTRL_LAT                14                  // C0
+#define CTRL_DAT                15                  // C1
 
-#define CPU_RST                 0
-#define CPU_CLK                 1
+#define CPU_RST                 0                   // D0
+#define CPU_CLK                 1                   // D1
 
 
 #define SR_D0                   (1llu << 0llu)      //
@@ -85,45 +92,87 @@ void panic() {
 
 inline u8 __attribute__((always_inline)) read_insn() {
     u8 res = 0;
-    if(digitalRead(INSN0)) res |= 1;
-    if(digitalRead(INSN1)) res |= 2;
-    if(digitalRead(INSN2)) res |= 4;
-    if(digitalRead(INSN3)) res |= 8;
-    if(digitalRead(INSN4)) res |= 16;
-    if(digitalRead(INSN5)) res |= 32;
-    if(digitalRead(INSN6)) res |= 64;
-    if(digitalRead(INSN7)) res |= 128;
+    if(PINC & (1 << 3)) res |= 1;
+    if(PINC & (1 << 2)) res |= 2;
+    if(PIND & (1 << 2)) res |= 4;
+    if(PIND & (1 << 3)) res |= 8;
+    if(PIND & (1 << 4)) res |= 16;
+    if(PIND & (1 << 5)) res |= 32;
+    if(PINC & (1 << 5)) res |= 64;
+    if(PINC & (1 << 4)) res |= 128;
     return res;
 }
 
 inline u8 __attribute__((always_inline)) read_upc() {
     u8 res = 0;
-    if(digitalRead(UPC0)) res |= 1;
-    if(digitalRead(UPC1)) res |= 2;
-    if(digitalRead(UPC2)) res |= 4;
-    if(digitalRead(UPC3)) res |= 8;
+    if(PINB & (1 << 0)) res |= 1;
+    if(PINB & (1 << 1)) res |= 2;
+    if(PINB & (1 << 2)) res |= 4;
+    if(PINB & (1 << 3)) res |= 8;
     return res;
 }
 
 inline u8 __attribute__((always_inline)) read_flags() {
     u8 f = 0;
-    if(digitalRead(FLAGZ)) f |= 1;
-    if(digitalRead(FLAGC)) f |= 2;
+    if(PIND & (1 << 6)) f |= 1;
+    if(PIND & (1 << 7)) f |= 2;
     return f;
 }
 
 inline void __attribute__((always_inline)) pulse_clk() {
-    digitalWrite(CPU_CLK, HIGH);
-    digitalWrite(CPU_CLK, LOW);
+    begin_critical();
+    {
+        PORTD |= (1 << 1);
+        PORTD &= ~(1 << 1);
+    }
+    end_critical();
 }
 
 inline void __attribute__((always_inline)) write_sr(u8 a, u8 b, u8 c, u8 d) {
-    digitalWrite(CTRL_LAT, LOW);
-    shiftOut(CTRL_DAT, CTRL_CLK, MSBFIRST, a);
-    shiftOut(CTRL_DAT, CTRL_CLK, MSBFIRST, b);
-    shiftOut(CTRL_DAT, CTRL_CLK, MSBFIRST, c);
-    shiftOut(CTRL_DAT, CTRL_CLK, MSBFIRST, d);
-    digitalWrite(CTRL_LAT, HIGH);
+    begin_critical();
+    {
+        PORTC |= (1 << 0);
+        #define SO(x, n)                            \
+            if(x & (1 << n))    PORTC |= (1 << 1);  \
+            else                PORTC &= ~(1 << 1); \
+            PORTB |= (1 << 5);                      \
+            PORTB &= ~(1 << 5);
+        SO(a, 7)
+        SO(a, 6)
+        SO(a, 5)
+        SO(a, 4)
+        SO(a, 3)
+        SO(a, 2)
+        SO(a, 1)
+        SO(a, 0)
+        SO(b, 7)
+        SO(b, 6)
+        SO(b, 5)
+        SO(b, 4)
+        SO(b, 3)
+        SO(b, 2)
+        SO(b, 1)
+        SO(b, 0)
+        SO(c, 7)
+        SO(c, 6)
+        SO(c, 5)
+        SO(c, 4)
+        SO(c, 3)
+        SO(c, 2)
+        SO(c, 1)
+        SO(c, 0)
+        SO(d, 7)
+        SO(d, 6)
+        SO(d, 5)
+        SO(d, 4)
+        SO(d, 3)
+        SO(d, 2)
+        SO(d, 1)
+        SO(d, 0)
+        #undef SO
+        PORTC &= ~(1 << 0);
+    }
+    end_critical();
 }
 
 inline void __attribute__((always_inline)) write_sr(u32 x) {
@@ -188,12 +237,11 @@ inline void __attribute__((always_inline)) load_code() {
 
 inline void __attribute__((always_inline)) reset() {
     digitalWrite(CTRL_CLR, LOW);
-    digitalWrite(CTRL_CLR, LOW);
     digitalWrite(CPU_RST, LOW);
     delay(1);
     digitalWrite(CTRL_CLR, HIGH);
-    digitalWrite(CTRL_CLR, HIGH);
     digitalWrite(CPU_RST, HIGH);
+    delay(1);
 
     pulse_sr(0x00 | SR_D_RD | SR_MAR_LO_LD | SR_MAR_HI_LD | SR_D_TO_MAR_LO | SR_D_TO_MAR_HI | SR_IR_LD | SR_A_LD | SR_B_LD | SR_UPC_RST);
     write_sr(0);

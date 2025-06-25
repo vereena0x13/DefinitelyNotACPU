@@ -1,10 +1,10 @@
-ARDUINO_PORT?=/dev/ttyUSB0
+PORT?=/dev/ttyUSB0
 PROGRAM?=test
 
 .PHONY: program cpu_ctrl ucode asm clean
 
 program: cpu_ctrl
-	arduino-cli upload -b arduino:avr:nano -p ${ARDUINO_PORT} cpu_ctrl
+	arduino-cli upload -b arduino:avr:nano -p ${PORT} cpu_ctrl
 
 cpu_ctrl: ucode asm
 	arduino-cli compile -b arduino:avr:nano --library cpu_ctrl cpu_ctrl
