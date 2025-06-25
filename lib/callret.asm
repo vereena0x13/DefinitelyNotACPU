@@ -2,25 +2,27 @@
 
 
 #ruledef {
-    call {addr: u16} => asm {   ; 189 cy
-pc:     stpc                    ; 7
-        lda pc+2                ; 6
-        add #(pc2 - pc - 1)     ; 4
-        sta pc+2                ; 6
-        lda pc+1                ; 6
+    call {addr: u16} => asm {   ; 173 cy
+        sub16 sp, sp, #2        ; 32
+a:      stpc                    ; 7
+        lda a+2                 ; 6
+        add #(b - a - 1)        ; 4
+        sta a+2                 ; 6
+        lda a+1                 ; 6
         adc #0                  ; 4
-        push                    ; 72
-        lda pc+2                ; 6
-        push                    ; 72
+        sta [sp], 2             ; 48
+        lda a+2                 ; 6
+        sta [sp], 1             ; 48
         jmp {addr}              ; 6
-pc2:    
+b:
     }
 
-    ret => asm {                ; 142 cy
-        pop                     ; 62
-        sta pc+2                ; 6
-        pop                     ; 62
-        sta pc+1                ; 6
-pc:     jmp 0x0000              ; 6
+    ret => asm {                ; 110 cy
+        lda [sp], 1             ; 30 
+        sta a+2                 ; 6
+        lda [sp], 2             ; 30
+        sta a+1                 ; 6
+        add16 sp, sp, #2        ; 32        
+a:      jmp 0x0000              ; 6
     }
 }
