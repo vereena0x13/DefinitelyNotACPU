@@ -2,3 +2,4 @@
  - remove the bitwise not function from the PLD logic
  - allow loading (and perhaps setting and clearing too, probably) the Z and C flags individually
     - Z flag should be touched by and, or, xor, but C shouldn't 
+ - switch to the correct endianness (little). literally just made it how it is without thinking lol

@@ -1,15 +1,13 @@
 #include "../arch/isa.asm"
-#include "macros.asm"
-#include "lcd.asm"
-
-
 
                         jmp start
 
 
-
-#include "lcd_hex.asm"
-#include "stack.asm"
+#include "../lib/macros.asm"
+#include "../lib/lcd.asm"
+#include "../lib/lcd_hex.asm"
+#include "../lib/stack.asm"
+#include "../lib/callret.asm"
 
 
 
@@ -17,34 +15,18 @@ start:                  lcd_init
                         lcd_clear
                         lcd_goto 0, 0
                         
-                        
-                        lda #"H"
-                        push
-                        lda #"e"
-                        push
-                        lda #"l"
-                        push
-                        lda #"l"
-                        push
-                        lda #"o"
-                        push
 
-                        #res 64
+                        lda #1
+                        call foo
+                        lda #2
 
-                        pop
-                        sta LCDDAT
-                        pop
-                        sta LCDDAT
-                        pop
-                        sta LCDDAT
-                        pop
-                        sta LCDDAT
-                        pop
-                        sta LCDDAT
-                        
-                        
-                        
-                        
                         
 l00p5ever:              #res 64
                         jmp l00p5ever
+
+
+
+
+foo:                    lda #0x33
+                        ret
+                        

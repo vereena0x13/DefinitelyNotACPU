@@ -43,10 +43,12 @@ op_orm                      = 0x1E          ; 1110  xx10  =>  bit
 
 op_jmp                      = 0x20
 
-op_jz                       = 0x25
-op_jc                       = 0x26
-op_jnz                      = 0x27
-op_jnc                      = 0x28
+op_jz                       = 0x21
+op_jc                       = 0x22
+op_jnz                      = 0x23
+op_jnc                      = 0x24
+
+op_stpc                     = 0x25
 
 
 #ruledef arch {
@@ -91,4 +93,6 @@ op_jnc                      = 0x28
     jc {addr: u16}          => op_jc @ addr
     jnz {addr: u16}         => op_jnz @ addr
     jnc {addr: u16}         => op_jnc @ addr
+
+    stpc                    => op_stpc @ 0x00 @ 0x00
 }

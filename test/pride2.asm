@@ -1,5 +1,5 @@
 #include "../arch/isa.asm"
-#include "macros.asm"
+#include "../lib/macros.asm"
 
 
 

@@ -32,18 +32,6 @@ FLAG_C                  = 0
         uinsn pc_inc
         uinsn pc_rd | ram_rd | d_to_mar_lo | mar_lo_ld
     }
-
-
-    i_jskip => asm {
-        fetch
-        i_ld_mar_no_inc
-        urst pc_inc
-    }
-    i_jtake => asm {
-        fetch
-        i_ld_mar_no_inc
-        urst mar_rd | pc_ld
-    }
 }
 
 
@@ -237,33 +225,52 @@ FLAG_C                  = 0
 
 
 #addr opaddr(op_jz)
+                        fetch
+                        i_ld_mar_no_inc
 #if FLAG_Z == 1 {
-                        i_jtake
+                        urst mar_rd | pc_ld
 }
 #else {
-                        i_jskip
+                        urst pc_inc
 }
 
 #addr opaddr(op_jc)
+                        fetch
+                        i_ld_mar_no_inc
 #if FLAG_C == 1 {
-                        i_jtake
+                        urst mar_rd | pc_ld
 }
 #else {
-                        i_jskip
+                        urst pc_inc
 }
 
 #addr opaddr(op_jnz)
+                        fetch
+                        i_ld_mar_no_inc
 #if FLAG_Z == 1 {
-                        i_jskip
+                        urst pc_inc
 }
 #else {
-                        i_jtake
+                        urst mar_rd | pc_ld
 }
 
 #addr opaddr(op_jnc)
+                        fetch
+                        i_ld_mar_no_inc
 #if FLAG_C == 1 {
-                        i_jskip
+                        urst pc_inc
 }
 #else {
-                        i_jtake
+                        urst mar_rd | pc_ld
 }
+
+
+
+#addr opaddr(op_stpc)
+                        fetch
+                        uinsn pc_rd | addr_hi_to_d | ram_wr
+                        uinsn pc_rd | addr_lo_to_d | a_ld
+                        uinsn pc_inc
+                        uinsn pc_rd | a_rd | ram_wr
+                        urst pc_inc
+                                            

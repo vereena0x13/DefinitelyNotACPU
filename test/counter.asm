@@ -1,14 +1,10 @@
 #include "../arch/isa.asm"
-#include "macros.asm"
-#include "lcd.asm"
-
-
 
                     jmp start
 
-
-
-#include "lcd_hex.asm"
+#include "../lib/macros.asm"
+#include "../lib/lcd.asm"
+#include "../lib/lcd_hex.asm"
 
 
 
