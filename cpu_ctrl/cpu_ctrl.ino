@@ -110,6 +110,9 @@ inline u8 __attribute__((always_inline)) read_flags() {
     //            well, shifting right by 6 would take 6 clocks, so.. ig there ya go?
     //            whereas each branch and assignment would be what, 2 or 3 each? so...
     //            yeah, there ya go ig. will delete this after i'm satisfied.
+    //            actually, if we want to make reading the flags faster, all we have
+    //            to do is rearrange the inputs such that the flags are on bits 0 and 1
+    //            of whatever port we put them on.
     //return (PIND & 0xC0) >> 6;
 }
 
