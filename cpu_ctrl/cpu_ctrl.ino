@@ -6,19 +6,21 @@ static_assert(sizeof(u16) == 2);
 static_assert(sizeof(u32) == 4);
 
 
-#if 1
+#define nop() __asm__ __volatile__ ("nop\n\t")
+
+
+#if 0
 #define begin_critical()    \
     u8 sreg = SREG;         \
     cli()
 #define end_critical()      \
     SREG = sreg;
+#define eep() nop(); nop(); nop(); nop()
 #else
 #define begin_critical()
 #define end_critical()
+#define eep()
 #endif
-
-#define nop() __asm__ __volatile__ ("nop\n\t")
-#define eep() nop(); nop(); nop(); nop()
 
 
 void panic(u8 a, u8 b, u8 c) {
@@ -308,8 +310,7 @@ void setup() {
     load_code();
     reset();
 
-    //cli();
-    sei();
+    cli();
 }
 
 void loop() {
