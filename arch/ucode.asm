@@ -86,127 +86,153 @@ alu_bit_not             = alu_xorb | alu_ci
 
 
 
-#addr opaddr(op_nop)    uinsn pc_rd | ram_rd | ir_ld
+#addr opaddr(op_nop)    
+                        uinsn pc_rd | ram_rd | ir_ld
                         urst pc_inc
 
 
 
-#addr opaddr(op_ldz)    fetch
+#addr opaddr(op_ldz)    
+                        fetch
                         urst a_ld
 
-#addr opaddr(op_stz)    fetch
+#addr opaddr(op_stz)    
+                        fetch
                         i_ld_mar_no_inc
                         urst pc_inc | mar_rd | ram_wr
 
 
 
-#addr opaddr(op_ldai)   fetch
+#addr opaddr(op_ldai)   
+                        fetch
                         uinsn pc_rd | ram_rd | a_ld
                         urst pc_inc
 
-#addr opaddr(op_ldam)   fetch
+#addr opaddr(op_ldam)   
+                        fetch
                         i_ld_mar_no_inc
                         urst pc_inc | mar_rd | ram_rd | a_ld
 
-#addr opaddr(op_sta)    fetch
+#addr opaddr(op_sta)    
+                        fetch
                         i_ld_mar_no_inc
                         urst pc_inc | mar_rd | a_rd | ram_wr
 
 
 
-#addr opaddr(op_addi)   fetch
+#addr opaddr(op_addi)   
+                        fetch
                         uinsn pc_rd | ram_rd | b_ld
                         urst pc_inc | alu_rd | a_ld | flags_ld
 
-#addr opaddr(op_addm)   fetch
+#addr opaddr(op_addm)   
+                        fetch
                         i_ld_mar_no_inc
                         uinsn pc_inc | mar_rd | ram_rd | b_ld
                         urst alu_rd | a_ld | flags_ld
 
-#addr opaddr(op_subi)   fetch
+#addr opaddr(op_subi)   
+                        fetch
                         uinsn pc_rd | ram_rd | b_ld
                         urst pc_inc | alu_ci | alu_xorb | alu_rd | a_ld | flags_ld
 
-#addr opaddr(op_subm)   fetch
+#addr opaddr(op_subm)   
+                        fetch
                         i_ld_mar_no_inc
                         uinsn pc_inc | mar_rd | ram_rd | b_ld
                         urst alu_ci | alu_xorb | alu_rd | a_ld | flags_ld
 
 
 
-#addr opaddr(op_cmpi)   fetch
+#addr opaddr(op_cmpi)   
+                        fetch
                         uinsn pc_rd | ram_rd | b_ld
                         urst pc_inc | alu_ci | alu_xorb | alu_rd | flags_ld
 
-#addr opaddr(op_cmpm)   fetch
+#addr opaddr(op_cmpm)   
+                        fetch
                         i_ld_mar_no_inc
                         uinsn pc_inc | mar_rd | ram_rd | b_ld
                         urst alu_ci | alu_xorb | alu_rd | flags_ld
 
 
 
-#addr opaddr(op_lshi)   fetch
+#addr opaddr(op_lshi)   
+                        fetch
                         uinsn pc_rd | ram_rd | b_ld
                         urst pc_inc | alu_bit_rd | a_ld
 
-#addr opaddr(op_rshi)   fetch
+#addr opaddr(op_rshi)   
+                        fetch
                         uinsn pc_rd | ram_rd | b_ld
                         urst pc_inc | alu_bit_rd | a_ld
 
-#addr opaddr(op_andi)   fetch
+#addr opaddr(op_andi)   
+                        fetch
                         uinsn pc_rd | ram_rd | b_ld
                         urst pc_inc | alu_bit_and | alu_bit_rd | a_ld
 
-#addr opaddr(op_xori)   fetch
+#addr opaddr(op_xori)   
+                        fetch
                         uinsn pc_rd | ram_rd | b_ld
                         urst pc_inc | alu_bit_xor | alu_bit_rd | a_ld
 
-#addr opaddr(op_lsh)    fetch
+#addr opaddr(op_lsh)    
+                        fetch
                         uinsn a_rd | b_ld
                         urst alu_bit_rd | a_ld
 
-#addr opaddr(op_rsh)    fetch
+#addr opaddr(op_rsh)    
+                        fetch
                         uinsn a_rd | b_ld
                         urst alu_bit_rd | a_ld
 
-#addr opaddr(op_andm)   fetch
+#addr opaddr(op_andm)   
+                        fetch
                         i_ld_mar_no_inc
                         uinsn pc_inc | mar_rd | ram_rd | b_ld
                         urst alu_bit_and | alu_bit_rd | a_ld
 
-#addr opaddr(op_xorm)   fetch
+#addr opaddr(op_xorm)   
+                        fetch
                         i_ld_mar_no_inc
                         uinsn pc_inc | mar_rd | ram_rd | b_ld
                         urst alu_bit_xor | alu_bit_rd | a_ld
 
-#addr opaddr(op_lshm)   fetch
+#addr opaddr(op_lshm)   
+                        fetch
                         i_ld_mar_no_inc
                         uinsn pc_inc | mar_rd | ram_rd | b_ld
                         urst alu_bit_rd | a_ld
 
-#addr opaddr(op_rshm)   fetch
+#addr opaddr(op_rshm)   
+                        fetch
                         i_ld_mar_no_inc
                         uinsn pc_inc | mar_rd | ram_rd | b_ld
                         urst alu_bit_rd | a_ld
 
-#addr opaddr(op_ori)    fetch
+#addr opaddr(op_ori)    
+                        fetch
                         uinsn pc_rd | ram_rd | b_ld
                         urst pc_inc | alu_bit_or | alu_bit_rd | a_ld
 
-#addr opaddr(op_orm)    fetch
+#addr opaddr(op_orm)    
+                        fetch
                         i_ld_mar_no_inc
                         uinsn pc_inc | mar_rd | ram_rd | b_ld
                         urst alu_bit_or | alu_bit_rd | a_ld
 
 
 
-#addr opaddr(op_jmp)    fetch
+#addr opaddr(op_jmp)    
+                        fetch
                         i_ld_mar_no_inc
                         urst mar_rd | pc_ld
 
 
 
-#addr opaddr(op_adci)   fetch
+#addr opaddr(op_adci)   
+                        fetch
                         uinsn pc_rd | ram_rd | b_ld
 #if FLAG_C == 1 {
                         urst pc_inc | alu_ci | alu_rd | a_ld | flags_ld
@@ -215,7 +241,8 @@ alu_bit_not             = alu_xorb | alu_ci
                         urst pc_inc | alu_rd | a_ld | flags_ld
 }
 
-#addr opaddr(op_adcm)   fetch
+#addr opaddr(op_adcm)   
+                        fetch
                         i_ld_mar_no_inc
                         uinsn pc_inc | mar_rd | ram_rd | b_ld
 #if FLAG_C == 1 {
@@ -225,7 +252,8 @@ alu_bit_not             = alu_xorb | alu_ci
                         urst alu_rd | a_ld | flags_ld
 }
 
-#addr opaddr(op_sbci)   fetch
+#addr opaddr(op_sbci)   
+                        fetch
                         uinsn pc_rd | ram_rd | b_ld
 #if FLAG_C == 1 {
                         urst pc_inc | alu_ci | alu_xorb | alu_rd | a_ld | flags_ld
@@ -234,7 +262,8 @@ alu_bit_not             = alu_xorb | alu_ci
                         urst pc_inc | alu_xorb | alu_rd | a_ld | flags_ld
 }
 
-#addr opaddr(op_sbcm)   fetch
+#addr opaddr(op_sbcm)   
+                        fetch
                         i_ld_mar_no_inc
                         uinsn pc_inc | mar_rd | ram_rd | b_ld
 #if FLAG_C == 1 {
