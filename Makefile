@@ -19,4 +19,4 @@ asm:
 	customasm -f hexcomma -o cpu_ctrl/program.h "test/${PROGRAM}.asm"
 
 clean:
-	rm -f cpu_ctrl/ucode_zc.h cpu_ctrl/ucode_Zc.h cpu_ctrl/ucode_zC.h cpu_ctrl/ucode_ZC.h cpu_ctrl/program.h
+	rm -f cpu_ctrl/*.h
