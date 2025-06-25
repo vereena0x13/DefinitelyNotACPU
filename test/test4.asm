@@ -16,10 +16,12 @@ start:                  lcd_init
                         lcd_goto 0, 0
                         
 
-                        lda #0b01001011
+                        lda #13
                         push
-                        call foo
+                        call fib
                         pop
+
+                        lcd_write_hex_byte
 
                         
 l00p5ever:              #res 64
@@ -27,8 +29,26 @@ l00p5ever:              #res 64
 
 
 
+fib:                    lda [sp], 3
+                        cmp #0
+                        jz .end
+                        cmp #1
+                        jz .end
 
-foo:                    lda [sp], 3
-                        lsh
+                        sub #1
+                        push
+                        call fib
+                        
+                        lda [sp], 4
+                        sub #2
+                        push
+                        call fib
+                        
+                        pop
+                        sta .t0
+                        pop
+                        add .t0
                         sta [sp], 3
-                        ret
+
+.end:                   ret
+.t0:                    #res 1
