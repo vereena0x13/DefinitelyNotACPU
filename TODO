@@ -2,7 +2,3 @@
  - remove the bitwise not function from the PLD logic
  - allow loading (and perhaps setting and clearing too, probably) the Z and C flags individually
     - Z flag should be touched by and, or, xor, but C shouldn't 
- - instead of having ucode_base and the ucode_xx files, let's just have one ucode file 
-   and then generate it four times. we can pass in defines to customasm on the CLI to 
-   specify the flags, and then just use #ifs. and then we just concatenate each output.
-   not sure why i didn't think to do it that way originally lol

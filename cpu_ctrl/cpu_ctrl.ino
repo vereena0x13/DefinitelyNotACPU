@@ -145,7 +145,13 @@ inline void __attribute__((always_inline)) pulse_sr(u32 x) {
 #define FMAX            4
 
 const PROGMEM u8 ucode[FMAX*OPMAX*UMAX*4] = {
-#include "ucode.h"
+#include "ucode_zc.h"
+,
+#include "ucode_Zc.h"
+,
+#include "ucode_zC.h"
+,
+#include "ucode_ZC.h"
 };
 
 #define get_uinsn_b(i, u, f, b) pgm_read_byte(ucode + f*OPMAX*UMAX*4 + i*UMAX*4 + u*4 + b)
