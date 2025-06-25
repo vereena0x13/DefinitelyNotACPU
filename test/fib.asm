@@ -23,10 +23,19 @@
 
     inc16 {addr: u16} => asm {
         lda {addr}+1
-        add #0x01
+        add #1
         sta {addr}+1
         lda {addr}
-        add #0x00
+        adc #0
+        sta {addr}
+    }
+
+    dec16 {addr: u16} => asm {
+        lda {addr}+1
+        sub #1
+        sta {addr}+1
+        lda {addr}
+        sbc #0
         sta {addr}
     }
 }
@@ -76,17 +85,28 @@ start:              lcd_init
                     lcd_goto 0, 0
 
 
-                    ldz
+;                     ldz
+; l00p:               #res 512
+;                     sta t0
+;                     lcd_goto 0, 0
+;                     lda t0
+;                     lcd_write_hex_byte
+;                     add #1
+;                     jmp l00p
 
-l00p:               #res 64
+
+l00p:               #res 512
                     
-                    sta t0
                     lcd_goto 0, 0
-                    lda t0
+
+                    lda counter
                     lcd_write_hex_byte
-                    
+
                     add #1
+                    sta counter
+
                     jmp l00p
+
 
 
 loop:               #res 64
@@ -94,3 +114,4 @@ loop:               #res 64
 
 
 
+counter:            #d8 0

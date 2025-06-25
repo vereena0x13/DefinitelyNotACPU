@@ -83,10 +83,10 @@ op_jnc                      = 0x28
 
     jmp {addr: u16}         => op_jmp @ addr
 
-    adc #{imm: u8}          => op_adc @ imm
-    adc {addr: u16}         => op_adc @ addr
-    sbc #{imm: u8}          => op_sbc @ imm
-    sbc {addr: u16}         => op_sbc @ addr
+    adc #{imm: u8}          => op_adci @ imm
+    adc {addr: u16}         => op_adcm @ addr
+    sbc #{imm: u8}          => op_sbci @ imm
+    sbc {addr: u16}         => op_sbcm @ addr
     
     jz {addr: u16}          => op_jz @ addr
     jc {addr: u16}          => op_jc @ addr
