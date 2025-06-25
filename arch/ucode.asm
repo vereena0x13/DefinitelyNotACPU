@@ -1,43 +1,6 @@
-d_rd                    = 1 << 8
-alu_xorb                = 1 << 9
-alu_ci                  = 1 << 10
-;2                      = 1 << 11
-pc_rd                   = 1 << 12
-pc_inc                  = 1 << 13
-pc_ld                   = 1 << 14
-mar_rd                  = 1 << 15
-mar_lo_ld               = 1 << 16
-mar_hi_ld               = 1 << 17
-a_rd                    = 1 << 18
-a_ld                    = 1 << 19
-b_ld                    = 1 << 20
-flags_ld                = 1 << 21
-upc_rst                 = 1 << 22
-ram_rd                  = 1 << 23
-ram_wr                  = 1 << 24
-ir_ld                   = 1 << 25
-addr_lo_to_d            = 1 << 26
-addr_hi_to_d            = 1 << 27
-d_to_mar_lo             = 1 << 29
-d_to_mar_hi             = 1 << 28
-upc_inc                 = 1 << 30
-alu_rd                  = 1 << 31
-
-
-OPMAX                   = 32
+OPMAX                   = 64
 UMAX                    = 16
 FMAX                    = 4
-
-
-#ruledef ucode {
-    uinsn {uops: u32}   => (uops | upc_inc)`32
-    urst {uops: u32}    => (uops | upc_rst)`32
-
-    fetch => asm {
-        uinsn pc_rd | ram_rd | ir_ld
-        uinsn pc_inc
-    }
-}
 
 
 #bankdef ucode_zc {
@@ -69,7 +32,55 @@ FMAX                    = 4
 }
 
 
-#ruledef {
+d0                      = 1 << 0
+d1                      = 1 << 1
+d2                      = 1 << 2
+d3                      = 1 << 3
+d4                      = 1 << 4
+d5                      = 1 << 5
+d6                      = 1 << 6
+d7                      = 1 << 7
+d_rd                    = 1 << 8
+alu_xorb                = 1 << 9
+alu_ci                  = 1 << 10
+alu_bit_rd              = 1 << 11
+pc_rd                   = 1 << 12
+pc_inc                  = 1 << 13
+pc_ld                   = 1 << 14
+mar_rd                  = 1 << 15
+mar_lo_ld               = 1 << 16
+mar_hi_ld               = 1 << 17
+a_rd                    = 1 << 18
+a_ld                    = 1 << 19
+b_ld                    = 1 << 20
+flags_ld                = 1 << 21
+upc_rst                 = 1 << 22
+ram_rd                  = 1 << 23
+ram_wr                  = 1 << 24
+ir_ld                   = 1 << 25
+addr_lo_to_d            = 1 << 26
+addr_hi_to_d            = 1 << 27
+d_to_mar_lo             = 1 << 29
+d_to_mar_hi             = 1 << 28
+upc_inc                 = 1 << 30
+alu_rd                  = 1 << 31
+
+alu_bit_and             = 0
+alu_bit_or              = alu_xorb
+alu_bit_xor             = alu_ci
+alu_bit_not             = alu_xorb | alu_ci
+
+
+#ruledef ucode {
+    uinsn {uops: u32}   => (uops | upc_inc)`32
+    urst {uops: u32}    => (uops | upc_rst)`32
+
+    fetch => asm {
+        uinsn pc_rd | ram_rd | ir_ld
+        uinsn pc_inc
+    }
+
+
     i_ld_mar_no_inc => asm {
         uinsn pc_rd | ram_rd | d_to_mar_hi | mar_hi_ld
         uinsn pc_inc
@@ -136,6 +147,9 @@ FMAX                    = 4
     }
 }
 
+
+;#fn opaddr(op, z, c) => UMAX*32*op
+;#include "isa.asm"
 
 #bank ucode_zc
 zc:

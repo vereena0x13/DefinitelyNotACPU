@@ -1,7 +1,7 @@
 ARDUINO_PORT?=/dev/ttyUSB0
 PROGRAM?=test
 
-.PHONY: program cpu_ctrl ucode asm
+.PHONY: program cpu_ctrl ucode asm clean
 
 program: cpu_ctrl
 	arduino-cli upload -b arduino:avr:nano -p ${ARDUINO_PORT} cpu_ctrl
@@ -14,3 +14,6 @@ ucode:
 
 asm:
 	customasm -f hexcomma -o cpu_ctrl/program.h "test/${PROGRAM}.asm"
+
+clean:
+	rm -f cpu_ctrl/ucode.h cpu_ctrl/program.h

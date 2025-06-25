@@ -23,9 +23,7 @@ LCDDAT              = 0x7F01
         lda #0x00
         sta 0x0000
     }
-}
 
-#ruledef {
     inc16 {addr: u16} => asm {
         lda {addr}+1
         add #0x01

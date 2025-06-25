@@ -140,7 +140,7 @@ inline void __attribute__((always_inline)) pulse_sr(u32 x) {
 }
 
 
-#define OPMAX           32
+#define OPMAX           64
 #define UMAX            16
 #define FMAX            4
 
