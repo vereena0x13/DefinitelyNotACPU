@@ -12,7 +12,7 @@ HEX_DIGITS:         #d "0123456789ABCDEF"
 #ruledef {
     lcd_write_hex_digit => asm {
         add #(HEX_DIGITS & 0x00FF)
-        sta lcd_hex_tptr0 + 1
+        sta lcd_hex_tptr0
         lda [lcd_hex_tptr0]
         sta LCDDAT
     }
