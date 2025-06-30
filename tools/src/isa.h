@@ -43,7 +43,9 @@ enum InsnFlag : u8 {
     X(jnc,      0x24,   3,  6,  INSN_IMM16  ) \
     X(stpc,     0x25,   3,  7,  0           ) \
     X(inc,      0x26,   1,  3,  0           ) \
-    X(dec,      0x27,   1,  3,  0           )
+    X(dec,      0x27,   1,  3,  0           ) \
+    X(incm,     0x28,   3,  7,  INSN_IMM16  ) \
+    X(decm,     0x29,   3,  7,  INSN_IMM16  )
 
 
 #define X(name, op, size, cycles, flags) op_##name = op,

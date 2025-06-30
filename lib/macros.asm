@@ -30,11 +30,11 @@ a:      stz 0x0000                                              ; 6
     }
 
     
-    st16 {addr: u16}, #{imm: u16} => asm {
-        lda #({imm} & 0xFF)
-        sta {addr}
-        lda #(({imm} >> 8) & 0xFF)
-        sta {addr}+1
+    st16 {addr: u16}, #{imm: u16} => asm {                      ; 20 cy
+        lda #({imm} & 0xFF)                                     ; 4
+        sta {addr}                                              ; 6
+        lda #(({imm} >> 8) & 0xFF)                              ; 4
+        sta {addr}+1                                            ; 6
     }
 
 
@@ -58,19 +58,6 @@ a:      lda 0x0000                                              ; 6
         sta a+2                                                 ; 6
         lda #0x00                                               ; 4
 a:      sta 0x0000                                              ; 6
-    }
-
-
-    inc {addr: u16} => asm {
-        lda {addr}
-        inc
-        sta {addr}
-    }
-
-    dec {addr: u16} => asm {
-        lda {addr}
-        dec
-        sta {addr}
     }
 
 
@@ -101,7 +88,7 @@ a:      sta 0x0000                                              ; 6
     }
 
 
-    spin => asm {
-l:      jmp l
+    spin => asm {                                               ; 6 cy
+l:      jmp l                                                   ; 6
     }
 }

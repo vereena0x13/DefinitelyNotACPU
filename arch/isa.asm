@@ -48,6 +48,8 @@ op_stpc                     = 0x25
 
 op_inc                      = 0x26
 op_dec                      = 0x27
+op_incm                     = 0x28
+op_decm                     = 0x29
 
 
 #ruledef arch {
@@ -96,4 +98,6 @@ op_dec                      = 0x27
 
     inc                     => op_inc
     dec                     => op_dec
+    inc {addr: u16}         => op_incm @ addr[7:0] @ addr[15:8]
+    dec {addr: u16}         => op_decm @ addr[7:0] @ addr[15:8]
 }

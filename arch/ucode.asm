@@ -286,3 +286,17 @@ FLAG_C                  = 0
                         uinsn pc_rd | ram_rd | ir_ld
                         uinsn pc_inc | b_ld
                         urst alu_xorb | alu_rd | a_ld
+
+#addr opaddr(op_incm)   ; 7 cy
+                        uinsn pc_rd | ram_rd | ir_ld
+                        uinsn pc_inc | b_ld
+                        i_ld_mar_no_inc
+                        uinsn pc_inc | mar_rd | ram_rd | a_ld
+                        urst alu_ci | alu_rd | mar_rd | ram_wr
+
+#addr opaddr(op_decm)   ; 7 cy
+                        uinsn pc_rd | ram_rd | ir_ld
+                        uinsn pc_inc | b_ld
+                        i_ld_mar_no_inc
+                        uinsn pc_inc | mar_rd | ram_rd | a_ld
+                        urst alu_xorb | alu_rd | mar_rd | ram_wr
