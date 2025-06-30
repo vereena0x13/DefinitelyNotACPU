@@ -150,34 +150,34 @@ FLAG_C                  = 0
 
 
 
-#addr opaddr(op_lshi)   ; 4 cy
+#addr opaddr(op_shli)   ; 4 cy
                         fetch
                         uinsn pc_rd | ram_rd | b_ld
                         urst pc_inc | alu_bit_rd | a_ld
 
-#addr opaddr(op_lshm)   ; 7 cy
+#addr opaddr(op_shlm)   ; 7 cy
                         fetch
                         i_ld_mar_no_inc
                         uinsn pc_inc | mar_rd | ram_rd | b_ld
                         urst alu_bit_rd | a_ld
 
-#addr opaddr(op_lsh)    ; 4 cy
+#addr opaddr(op_shl)    ; 4 cy
                         fetch
                         uinsn a_rd | b_ld
                         urst alu_bit_rd | a_ld
 
-#addr opaddr(op_rshi)   ; 4 cy
+#addr opaddr(op_shri)   ; 4 cy
                         fetch
                         uinsn pc_rd | ram_rd | b_ld
                         urst pc_inc | alu_bit_rd | a_ld
 
-#addr opaddr(op_rshm)   ; 7 cy
+#addr opaddr(op_shrm)   ; 7 cy
                         fetch
                         i_ld_mar_no_inc
                         uinsn pc_inc | mar_rd | ram_rd | b_ld
                         urst alu_bit_rd | a_ld
 
-#addr opaddr(op_rsh)    ; 4 cy
+#addr opaddr(op_shr)    ; 4 cy
                         fetch
                         uinsn a_rd | b_ld
                         urst alu_bit_rd | a_ld

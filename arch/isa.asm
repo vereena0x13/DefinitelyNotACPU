@@ -24,16 +24,16 @@ op_sbcm                     = 0x0D
 op_cmpi                     = 0x0E
 op_cmpm                     = 0x0F
 
-op_lshi                     = 0x10
-op_rshi                     = 0x11
+op_shli                     = 0x10
+op_shri                     = 0x11
 op_andi                     = 0x12
 op_xori                     = 0x13
-op_lsh                      = 0x14
-op_rsh                      = 0x15
+op_shl                      = 0x14
+op_shr                      = 0x15
 op_andm                     = 0x16
 op_xorm                     = 0x17
-op_lshm                     = 0x18
-op_rshm                     = 0x19
+op_shlm                     = 0x18
+op_shrm                     = 0x19
 op_ori                      = 0x1A
 
 
@@ -73,12 +73,12 @@ op_stpc                     = 0x25
     cmp #{imm: u8}          => op_cmpi @ imm
     cmp {addr: u16}         => op_cmpm @ addr
 
-    lsh #{imm: u8}          => op_lshi @ imm
-    lsh {addr: u16}         => op_lshm @ addr
-    lsh                     => op_lsh
-    rsh #{imm: u8}          => op_rshi @ imm
-    rsh {addr: u16}         => op_rshm @ addr
-    rsh                     => op_rsh
+    shl #{imm: u8}          => op_shli @ imm
+    shl {addr: u16}         => op_shlm @ addr
+    shl                     => op_shl
+    shr #{imm: u8}          => op_shri @ imm
+    shr {addr: u16}         => op_shrm @ addr
+    shr                     => op_shr
     and #{imm: u8}          => op_andi @ imm
     and {addr: u16}         => op_andm @ addr
     or #{imm: u8}           => op_ori @ imm

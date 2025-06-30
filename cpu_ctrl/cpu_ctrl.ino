@@ -6,6 +6,9 @@ static_assert(sizeof(u16) == 2);
 static_assert(sizeof(u32) == 4);
 
 
+#define udelay delayMicroseconds
+
+
 void panic(u8 a, u8 b, u8 c) {
     sei();
     for(;;) {
@@ -118,7 +121,9 @@ inline u8 __attribute__((always_inline)) read_flags() {
 
 inline void __attribute__((always_inline)) pulse_clk() {
     PORTD |= (1 << 1);
+    udelay(10);
     PORTD &= ~(1 << 1);
+    udelay(10);
 }
 
 inline void __attribute__((always_inline)) write_sr(u8 a, u8 b, u8 c, u8 d) {
@@ -196,6 +201,8 @@ const PROGMEM u8 ucode[FMAX*OPMAX*UMAX*4] = {
 
 
 inline void __attribute__((always_inline)) cycle() {
+    //delay(1);
+
     u8 insn     = read_insn();
     if(insn >= OPMAX) panic(25, 250, 100);
 
@@ -225,9 +232,11 @@ inline void __attribute__((always_inline)) load_code() {
 inline void __attribute__((always_inline)) reset() {
     digitalWrite(CTRL_CLR, LOW);
     digitalWrite(CPU_RST, LOW);
+    udelay(250);
     digitalWrite(CTRL_CLR, HIGH);
     digitalWrite(CPU_RST, HIGH);
 
+    delay(1);
 
     // NOTE TODO: This is _totally_ a _perfectly reasonable_ _engineering-coded_ solution to our flaky reset issue.
     u8 insn, upc, flags;
@@ -237,9 +246,9 @@ inline void __attribute__((always_inline)) reset() {
         flags   = read_flags();
         pulse_sr(SR_D_TO_MAR_LO | SR_MAR_LO_LD | SR_D_TO_MAR_HI | SR_MAR_HI_LD | SR_IR_LD | SR_A_LD | SR_B_LD | SR_UPC_RST);
     } while(insn | upc | flags);
-
-
     write_sr(0);
+
+    delay(4);
 }
 
 
@@ -273,11 +282,13 @@ void setup() {
     pinMode(UPC2, INPUT);
     pinMode(UPC3, INPUT);
 
+    udelay(10);
+
     reset();
     load_code();
     reset();
 
-    cli();
+    delay(50);
 }
 
 void loop() {

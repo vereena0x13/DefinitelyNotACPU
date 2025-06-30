@@ -14,6 +14,8 @@ start:                  lcd_init
                         lcd_clear
                         lcd_goto 0, 0
 
+                        jmp blah
+
 
                         lda #13
                         push
@@ -21,6 +23,38 @@ start:                  lcd_init
                         pop
 
                         lcd_write_hex_byte
+
+                        N = 256
+                        lda #0x80
+blah:                   #res N
+                        shr
+                        #res N
+                        shr
+                        #res N
+                        shr
+                        #res N
+                        shr
+                        #res N
+                        shr
+                        #res N
+                        shr
+                        #res N
+                        shr
+                        #res N
+                        shl
+                        #res N
+                        shl
+                        #res N
+                        shl
+                        #res N
+                        shl
+                        #res N
+                        shl
+                        #res N
+                        shl
+                        #res N
+                        shl
+                        jmp blah
 
 
 l00p5ever:              #res 64
