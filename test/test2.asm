@@ -21,5 +21,9 @@ start:                  oled_init
                         oled_command 0x39
 
 
+                        #res 128
+                        jmp start
+
+
 l00p5ever:              #res 64
                         jmp l00p5ever

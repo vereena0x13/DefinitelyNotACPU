@@ -201,7 +201,7 @@ const PROGMEM u8 ucode[FMAX*OPMAX*UMAX*4] = {
 
 
 inline void __attribute__((always_inline)) cycle() {
-    //delay(1);
+    delay(1);
 
     u8 insn     = read_insn();
     if(insn >= OPMAX) panic(25, 250, 100);

@@ -35,11 +35,7 @@ op_xorm                     = 0x17
 op_shlm                     = 0x18
 op_shrm                     = 0x19
 op_ori                      = 0x1A
-
-
-
 op_orm                      = 0x1E
-
 
 op_jmp                      = 0x20
 

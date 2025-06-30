@@ -7,15 +7,15 @@ FLAG_Z                  = 0
 FLAG_C                  = 0
 
 
+#fn opaddr(op)          => op*UMAX*4
+
+
 #bankdef ucode {
     #bits 8
     #size OPMAX*UMAX*4
     #fill
     #outp 0
 }
-
-
-#fn opaddr(op)          => op*UMAX*4
 
 #ruledef ucode {
     uinsn {uops: u32}   => (uops | upc_inc)`32
