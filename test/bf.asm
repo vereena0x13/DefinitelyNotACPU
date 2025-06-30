@@ -6,7 +6,7 @@
 #include "../lib/stack.asm"
 
 #include "../lib/extra/lcd.asm"
-
+#include "../lib/extra/lcd_hex.asm"
 
 
 
@@ -82,11 +82,11 @@ brainfuck:              st16 bf_ip, #CODE
 .bf_left:               dec16 bf_dp
                         jmp .bfincip
 .bf_inc:                lda [bf_dp]
-                        add #1
+                        inc
                         sta [bf_dp]
                         jmp .bfincip
 .bf_dec:                lda [bf_dp]
-                        sub #1
+                        dec
                         sta [bf_dp]
                         jmp .bfincip
 .bf_putc:               lda [bf_dp]

@@ -63,13 +63,13 @@ a:      sta 0x0000                                              ; 6
 
     inc {addr: u16} => asm {
         lda {addr}
-        add #1
+        inc
         sta {addr}
     }
 
     dec {addr: u16} => asm {
         lda {addr}
-        sub #1
+        dec
         sta {addr}
     }
 

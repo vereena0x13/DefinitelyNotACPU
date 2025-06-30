@@ -276,3 +276,13 @@ FLAG_C                  = 0
                         urst pc_inc
 
 
+
+#addr opaddr(op_inc)    ; 3 cy
+                        uinsn pc_rd | ram_rd | ir_ld
+                        uinsn pc_inc | b_ld
+                        urst alu_ci | alu_rd | a_ld
+
+#addr opaddr(op_dec)    ; 3 cy
+                        uinsn pc_rd | ram_rd | ir_ld
+                        uinsn pc_inc | b_ld
+                        urst alu_xorb | alu_rd | a_ld

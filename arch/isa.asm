@@ -46,6 +46,9 @@ op_jnc                      = 0x24
 
 op_stpc                     = 0x25
 
+op_inc                      = 0x26
+op_dec                      = 0x27
+
 
 #ruledef arch {
     nop                     => op_nop
@@ -90,4 +93,7 @@ op_stpc                     = 0x25
     jnc {addr: u16}         => op_jnc @ addr[7:0] @ addr[15:8]
 
     stpc                    => op_stpc @ 0x00 @ 0x00
+
+    inc                     => op_inc
+    dec                     => op_dec
 }
