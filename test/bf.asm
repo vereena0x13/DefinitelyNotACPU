@@ -42,8 +42,16 @@ start:                  lcd_init
 
 
 brainfuck:              st16 bf_ip, #CODE
-                        call clear_tape ; leaves bf_dp at tape
-.bfloop:                
+                        st16 bf_dp, #(tape + 0x100)
+.clear_loop:            dec16 bf_dp
+                        stz [bf_dp]
+                        lda #tape[15:8]
+                        cmp bf_dp+1
+                        jnz .clear_loop
+                        lda #tape[7:0]
+                        cmp bf_dp
+                        jnz .clear_loop
+.bfloop:
                         lda bf_ip+1
                         cmp #(CODE + CODELEN)[15:8]
                         jnz .bfloop1
@@ -103,8 +111,7 @@ brainfuck:              st16 bf_ip, #CODE
                             jmp ..loop
 ..close:                    dec .t0
                             jmp ..loop
-..done:
-                        jmp .bfloop
+..done:                 jmp .bfloop
 .bf_close:              lda [bf_dp]
                         cmp #0
                         jz .bfincip
@@ -124,27 +131,13 @@ brainfuck:              st16 bf_ip, #CODE
                             jmp ..loop
 ..close:                    inc .t0
                             jmp ..loop
-..done:                 
-                        jmp .bfloop
+..done:                 jmp .bfloop
 
 .bfincip:               inc16 bf_ip
                         jmp .bfloop
 
 .bfdone:                ret
 .t0:                    #res 1
-
-
-
-clear_tape:             st16 bf_dp, #(tape + 0x100)
-.clear_loop:            dec16 bf_dp
-                        stz [bf_dp]
-                        lda #tape[15:8]
-                        cmp bf_dp+1
-                        jnz .clear_loop
-                        lda #tape[7:0]
-                        cmp bf_dp
-                        jnz .clear_loop    
-                        ret
 
 
 
