@@ -20,10 +20,10 @@ HEX_DIGITS:         #d "0123456789ABCDEF"
     lcd_write_hex_byte => asm {
         sta lcd_hex_t0
         and #0xF0
-        rsh
-        rsh
-        rsh
-        rsh
+        shr
+        shr
+        shr
+        shr
         lcd_write_hex_digit
         lda lcd_hex_t0
         and #0x0F
