@@ -28,9 +28,9 @@ FLAG_C                  = 0
 
 
     i_ld_mar_no_inc => asm {
-        uinsn pc_rd | ram_rd | d_to_mar_hi | mar_hi_ld
-        uinsn pc_inc
         uinsn pc_rd | ram_rd | d_to_mar_lo | mar_lo_ld
+        uinsn pc_inc
+        uinsn pc_rd | ram_rd | d_to_mar_hi | mar_hi_ld
     }
 }
 
@@ -269,8 +269,8 @@ FLAG_C                  = 0
 
 #addr opaddr(op_stpc)   ; 7 cy
                         fetch
-                        uinsn pc_rd | addr_hi_to_d | ram_wr
-                        uinsn pc_rd | addr_lo_to_d | a_ld
+                        uinsn pc_rd | addr_lo_to_d | ram_wr
+                        uinsn pc_rd | addr_hi_to_d | a_ld
                         uinsn pc_inc
                         uinsn pc_rd | a_rd | ram_wr
                         urst pc_inc

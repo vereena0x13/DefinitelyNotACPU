@@ -2,7 +2,6 @@
 
                         jmp start
 
-
 #include "../lib/macros.asm"
 #include "../lib/lcd.asm"
 #include "../lib/lcd_hex.asm"

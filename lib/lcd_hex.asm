@@ -2,7 +2,7 @@
 
 
 lcd_hex_t0:         #res 1
-lcd_hex_tptr0:      #d16 HEX_DIGITS
+lcd_hex_tptr0:      #d16 le(HEX_DIGITS`16)
 
 #align 16*32
 #assert (HEX_DIGITS & 0x000F) == 0

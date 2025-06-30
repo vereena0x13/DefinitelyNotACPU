@@ -46,6 +46,6 @@ loop:               #res N
 
 
 i:                  #d8 0
-ptr:                #d16 line1
+ptr:                #d16 le(line1)
 line1:              #d "HAPPY PRIDE MY"
 line2:              #d "FELLOW FAGGOTS"
