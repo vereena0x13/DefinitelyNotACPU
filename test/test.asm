@@ -1,6 +1,8 @@
 #include "../arch/isa.asm"
 
 
+
+
 loop:           lda a
                 add b
                 sta t0

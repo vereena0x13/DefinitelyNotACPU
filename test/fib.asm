@@ -3,9 +3,11 @@
                         jmp start
 
 #include "../lib/macros.asm"
-#include "../lib/lcd.asm"
-#include "../lib/lcd_hex.asm"
 #include "../lib/stack.asm"
+
+#include "../lib/extra/lcd.asm"
+#include "../lib/extra/lcd_hex.asm"
+
 
 
 

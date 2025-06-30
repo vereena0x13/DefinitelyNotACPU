@@ -1,6 +1,7 @@
 #include "../arch/isa.asm"
 #include "../lib/macros.asm"
-#include "../lib/lcd.asm"
+
+#include "../lib/extra/lcd.asm"
 
 
 
