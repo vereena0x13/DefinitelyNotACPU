@@ -15,13 +15,14 @@ start:                  lcd_init
                         lcd_goto 0, 0
 
 
-                        lda #13
+                        lda #7
                         push
                         call fib
                         pop
 
-                        lcd_write_hex_byte
+                        ;lcd_write_hex_byte
 
+                        #res 1024*4
                         jmp start
 
 
