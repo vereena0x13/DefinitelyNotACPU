@@ -87,57 +87,50 @@ brainfuck:              st16 bf_ip, #CODE
 .bf_open:               lda [bf_dp]
                         cmp #0
                         jnz .bfincip
-                        call bf_scanf
+                            lda #1
+                            sta .t0
+..loop:                     lda .t0
+                            cmp #0
+                            jz ..done
+                            inc16 bf_ip
+                            lda [bf_ip]
+                            cmp #"["
+                            jz ..open
+                            cmp #"]"
+                            jz ..close
+                            jmp ..loop
+..open:                     inc .t0
+                            jmp ..loop
+..close:                    dec .t0
+                            jmp ..loop
+..done:
                         jmp .bfloop
 .bf_close:              lda [bf_dp]
                         cmp #0
                         jz .bfincip
-                        call bf_scanb
+                            lda #1
+                            sta .t0
+..loop:                     lda .t0
+                            cmp #0
+                            jz ..done
+                            dec16 bf_ip
+                            lda [bf_ip]
+                            cmp #"["
+                            jz ..open
+                            cmp #"]"
+                            jz ..close
+                            jmp ..loop
+..open:                     dec .t0
+                            jmp ..loop
+..close:                    inc .t0
+                            jmp ..loop
+..done:                 
                         jmp .bfloop
 
 .bfincip:               inc16 bf_ip
                         jmp .bfloop
 
 .bfdone:                ret
-
-
-bf_scanf:               lda #1
-                        sta .t0
-.loop:                  lda .t0
-                        cmp #0
-                        jz .done
-                        inc16 bf_ip
-                        lda [bf_ip]
-                        cmp #"["
-                        jz .open
-                        cmp #"]"
-                        jz .close
-                        jmp .loop
-.open:                  inc .t0
-                        jmp .loop
-.close:                 dec .t0
-                        jmp .loop
-.done:                  ret
-.t0:                    #res 1
-
-
-bf_scanb:               lda #1
-                        sta .t0
-.loop:                  lda .t0
-                        cmp #0
-                        jz .done
-                        dec16 bf_ip
-                        lda [bf_ip]
-                        cmp #"["
-                        jz .open
-                        cmp #"]"
-                        jz .close
-                        jmp .loop
-.open:                  dec .t0
-                        jmp .loop
-.close:                 inc .t0
-                        jmp .loop
-.done:                  ret
 .t0:                    #res 1
 
 
