@@ -165,6 +165,7 @@ FLAG_C                  = 0
                         uinsn pc_rd | ram_rd | ir_ld
                         uinsn pc_inc | a_rd | b_ld
                         urst alu_bit_rd | a_ld
+                        
 
 #addr opaddr(op_shri)   ; 4 cy
                         fetch

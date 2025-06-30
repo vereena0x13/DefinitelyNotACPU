@@ -19,6 +19,7 @@
 #include "vstd.hpp"
 
 
+#include "util.cpp"
 #include "ctrl.h"
 #include "isa.h"
 #include "ucode.cpp"
@@ -31,10 +32,7 @@ void usage() {
 }
 
 s32 main(s32 argc, cstr *argv) {
-    if(argc < 2) {
-        usage();
-        return 1;
-    }
+    dump_ucode_info();
 
-    return disassemble(argv[1]);
+    return 0;
 }
