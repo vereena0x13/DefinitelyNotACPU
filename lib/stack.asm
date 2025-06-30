@@ -31,6 +31,21 @@ a:      lda 0x0000              ; 6
     }
 
 
+    push16 {addr: u16} => asm { ; 132 cy
+        lda {addr}+1            ; 6
+        push                    ; 60
+        lda {addr}              ; 6
+        push                    ; 60
+    }
+
+    pop16 {addr: u16} => asm {  ; 112 cy
+        pop                     ; 50
+        sta {addr}              ; 6
+        pop                     ; 50
+        sta {addr}+1            ; 6
+    }
+
+
     call {addr: u16} => asm {   ; 145 cy
 a:      stpc                    ; 7
         lda sp                  ; 6
