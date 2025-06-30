@@ -37,6 +37,9 @@ start:                  lcd_init
                         lda #"S"
                         sta LCDDAT
 
+                        #res 1024*8
+                        jmp start
+
                         spin
 
 
