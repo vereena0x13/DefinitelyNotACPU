@@ -37,6 +37,13 @@ a:      stz 0x0000                                              ; 6
         sta {addr}+1                                            ; 6
     }
 
+    mov16 {dst: u16}, {src: u16} => asm {                       ; 24
+        lda {src}                                               ; 6
+        sta {dst}                                               ; 6
+        lda {src}+1                                             ; 6
+        sta {src}+1                                             ; 6
+    }
+
 
     lda [{addr: u16}], {offset: u16} => asm {                   ; 38 cy
         lda {addr}                                              ; 6
