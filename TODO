@@ -1,7 +1,5 @@
  - change the bit shift inputs from B to A so we don't have to copy A into B to shift it
- - remove the bitwise not function from the PLD logic
- - allow loading (and perhaps setting and clearing too, probably) the Z and C flags individually
+ - remove the bitwise not function from the PLD logic -- er.. fix it.
+ - allow loading (and perhaps setting and clearing too, probably?) the Z and C flags individually
     - Z flag should be touched by and, or, xor, but C shouldn't 
- - generate a report of cycle counts for each instruction. probably the easiest way would be to
-   just write a program that includes the ucode_xx.h files and count em' up from that data.
  - consolidate ctrl.asm, isa.asm, ctrl.h, and isa.h

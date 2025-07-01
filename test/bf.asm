@@ -78,7 +78,7 @@ brainfuck:              st16 bf_ip, #CODE
                         jz .bf_open
                         cmp #"]"
                         jz .bf_close
-                        jmp .bfloop
+                        jmp .bfloop ; NOTE TODO: shouldn't this jmp to .bfincip ?
 
 .bf_right:              inc16 bf_dp
                         jmp .bfincip
