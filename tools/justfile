@@ -1,0 +1,17 @@
+EXE         := "cputool"
+
+CC          := "g++"
+STD         := "c++20"
+
+WARNINGS    := "-Wsuggest-override -Wno-switch -Wno-parentheses -Wvolatile -Wextra-semi -Wimplicit-fallthrough -Wsequence-point"
+INCLUDES    := "-I../vendor/vstd -I../cpu_ctrl"
+
+CXXFLAGS    := "--std=" + STD + " " + INCLUDES + " " + WARNINGS + " -ftabstop=4 -fmax-errors=15 -mavx -mavx2 -maes -nostdinc++ -fno-exceptions -fconcepts-diagnostics-depth=5"
+LDFLAGS     := "-lm -lpthread"
+
+
+all:
+    {{CC}} {{CXXFLAGS}} -o {{EXE}} src/main.cpp {{LDFLAGS}}
+
+clean:
+    rm -f {{EXE}}
