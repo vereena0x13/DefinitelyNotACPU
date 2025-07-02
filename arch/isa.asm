@@ -1,8 +1,3 @@
-OPMAX                       = 64
-UMAX                        = 16
-FMAX                        = 4
-
-
 op_nop                      = 0x00
 
 op_ldz                      = 0x01

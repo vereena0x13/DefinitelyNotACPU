@@ -79,16 +79,25 @@ bf_compile:             jmp .entry
             
             ; sta a+1
             emit #op_sta
-            
+            mov16 .t0, .pc
+            emit #0x00
+            emit #0x00
             
             ; lda {addr}+1
             emit_ldam {addr}+1
             
             ; sta a+2
-            ; TODO
+            emit #op_sta
+            mov16 .t1, .pc
+            emit #0x00
+            emit #0x00
 
 ; a:        lda 0x0000
-            emit_ldam 0x0000
+            emit #op_ldam
+            mov16 [.t0], .pc
+            emit #0x00
+            mov16 [.t1], .pc
+            emit #0x00
         }
     }
 
