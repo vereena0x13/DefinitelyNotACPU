@@ -24,6 +24,7 @@
 #include "isa.h"
 #include "ucode.cpp"
 #include "dasm.cpp"
+#include "emu.cpp"
 
 
 
@@ -32,7 +33,10 @@ void usage() {
 }
 
 s32 main(s32 argc, cstr *argv) {
-    dump_ucode_info();
+    if(argc < 2) {
+        usage();
+        return 1;
+    }
 
-    return 0;
+    return emulate(argv[1]);
 }

@@ -9,7 +9,7 @@
 #define SR_D_RD                 (1llu << 8llu)      // D            ->  data
 #define SR_ALU_XORB             (1llu << 9llu)      //
 #define SR_ALU_CI               (1llu << 10llu)     //
-#define SR_2                    (1llu << 11llu)     //
+#define SR_ALU_BIT_RD           (1llu << 11llu)     //
 #define SR_PC_RD                (1llu << 12llu)     // PC           ->  addr
 #define SR_PC_INC               (1llu << 13llu)     //
 #define SR_PC_LD                (1llu << 14llu)     // PC           :=  addr
@@ -30,3 +30,8 @@
 #define SR_D_TO_MAR_HI          (1llu << 28llu)     // x data       -> MAR[8:]
 #define SR_UPC_INC              (1llu << 30llu)     // x
 #define SR_ALU_RD               (1llu << 31llu)     // x
+
+#define ALU_BIT_AND             0
+#define ALU_BIT_OR              SR_ALU_XORB
+#define ALU_BIT_XOR             SR_ALU_CI
+#define ALU_BIT_NOT             SR_ALU_XORB | SR_ALU_CI

@@ -3,3 +3,4 @@
  - allow loading (and perhaps setting and clearing too, probably?) the Z and C flags individually
     - Z flag should be touched by and, or, xor, but C shouldn't 
  - consolidate ctrl.asm, isa.asm, ctrl.h, and isa.h
+ - automatically check microcode for mistakes causing multiple devices to drive to the same bus
