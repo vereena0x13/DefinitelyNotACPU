@@ -2,3 +2,4 @@
 out
 cpu_ctrl/program.h
 cpu_ctrl/ucode*
+bin

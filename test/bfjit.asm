@@ -1,6 +1,7 @@
 #include "../arch/isa.asm"
 
                         jmp start
+                        #d16 (bf_jitbuf`16)
 
 #include "../lib/macros.asm"
 #include "../lib/stack.asm"
@@ -41,6 +42,8 @@ start:                  lcd_init
 
                         ;#res 1024*8
                         ;jmp start
+
+                        jmp 0xFFFF
 
                         spin
 
@@ -101,8 +104,14 @@ bf_compile:             jmp .entry
         }
     }
 
-.entry:                 st16 .cptr, #CODE
+    .entry:             st16 .cptr, #CODE
                         st16 .pc, #bf_jitbuf
+
+                        lda .pc+1
+                        sta 0xCCCC
+                        lda .pc
+                        sta 0xCCCC
+                        ret
 
     .lh:                lda .cptr+1
                         cmp #(CODE + CODELEN)[15:8]
@@ -162,5 +171,5 @@ bf_compile:             jmp .entry
 
 bf_dp:                  #d16 le(0x8000) ; #res 2
 
-#align 1024*8
+#align 1024*4
 bf_jitbuf:

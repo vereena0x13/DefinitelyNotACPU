@@ -32,6 +32,10 @@ struct CPU {
     void cycle() {
         u32 uinsn                   = get_uinsn(ir, upc, flags); 
 
+
+        auto insn_name = ir < OP_COUNT ? INSN_NAME[ir] : "???";
+        printf("%04X:  %02X %s %02X  %X  %02X %02X %04X\n", pc, ir, insn_name, upc, flags, a, b, mar);
+
         //bool ctrl_d0                = (uinsn & SR_D0) == SR_D0;
         //bool ctrl_d1                = (uinsn & SR_D1) == SR_D1;
         //bool ctrl_d2                = (uinsn & SR_D2) == SR_D2;
@@ -88,9 +92,9 @@ struct CPU {
 
         if(ctrl_alu_rd) {
             u16 sum     = a + (ctrl_alu_xorb ? ~b : b) + (ctrl_alu_ci ? 1 : 0);
-            data        = sum;
+            data        = cast(u8, sum & 0xFF);
             zero        = data == 0;
-            carry       = cast(u8, sum & 0xFF);
+            carry       = (sum & 0xFF00) != 0;
         }
 
         if(ctrl_alu_bit_rd) {
@@ -122,27 +126,38 @@ struct CPU {
                             data = ~a;
                             break;
                         }
+                        default: {
+                            unreachable();
+                            break;
+                        }
                     }
+                    break;
+                }
+                default: {
+                    unreachable();
                     break;
                 }
             }
         }
 
 
-        if(ctrl_pc_ld)          pc = addr;
-        if(ctrl_mar_lo_ld)      mar = (mar & 0xFF00) | _mar_lo;
-        if(ctrl_mar_hi_ld)      mar = (mar & 0x00FF) | (_mar_hi << 8);
+        if(ctrl_pc_ld)          pc          = addr;
+        if(ctrl_mar_lo_ld)      mar         = (mar & 0xFF00) | cast(u16, _mar_lo);
+        if(ctrl_mar_hi_ld)      mar         = (mar & 0x00FF) | (cast(u16, _mar_hi) << 8);
 
-        if(ctrl_a_ld)           a = data;
-        if(ctrl_b_ld)           b = data;
+        if(ctrl_a_ld)           a           = data;
+        if(ctrl_b_ld)           b           = data;
 
-        if(ctrl_flags_ld)       flags = (zero ? 1 : 0) | (carry ? 2 : 0);
-        if(ctrl_ram_wr)         ram[addr] = data;
-        if(ctrl_ir_ld)          ir = data;
+        if(ctrl_flags_ld)       flags       = (zero ? 1 : 0) | (carry ? 2 : 0);
+        if(ctrl_ram_wr)         ram[addr]   = data;
+        if(ctrl_ir_ld)          ir          = data;
 
-        if(ctrl_pc_inc)         pc++;
-        if(ctrl_upc_inc)        upc++;
-        if(ctrl_upc_rst)        upc = 0;
+        if(ctrl_pc_inc)         pc          = pc + 1;
+        if(ctrl_upc_inc)        upc         = (upc + 1) & 0xF;
+        if(ctrl_upc_rst)        upc         = 0;
+
+
+        if(ctrl_ram_wr && addr == 0xCCCC) printf("%02X\n", data);
     }
 };
 
@@ -159,7 +174,9 @@ s32 emulate(cstr file) {
     memcpy(cpu->ram, data.data, data.size);
     data.free();
 
-    // TODO
+    while(cpu->pc != 0xFFFF) cpu->cycle();
+
+    hexdump(cpu->ram, 0x700);
 
     cpu->free();
     xfree(cpu);

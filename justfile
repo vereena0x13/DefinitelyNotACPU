@@ -13,6 +13,13 @@ ctrl prog: ucode (asm prog)
 asm prog:
     customasm -f hexcomma -o cpu_ctrl/program.h "test/{{prog}}.asm"
 
+emulate prog: ucode
+    just tools/
+    mkdir -p bin
+    customasm -o "bin/{{prog}}.bin" "test/{{prog}}.asm"
+    ./tools/cputool "bin/{{prog}}.bin"
+
 clean:
     rm -f cpu_ctrl/ucode*
     rm -f cpu_ctrl/program.h
+    rm -f bin/*
