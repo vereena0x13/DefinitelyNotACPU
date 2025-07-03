@@ -95,14 +95,13 @@ struct CPU {
             u8 c        = ctrl_alu_ci ? 1 : 0;
             if(ctrl_alu_xorb) { // NOTE TODO: hack
                 sum     = a - b + c - 1;
-                zero    = data == 0;
                 carry   = (sum & 0x100) == 0;
             } else {
                 sum     = a + b + c;
-                zero    = data == 0;
                 carry   = sum > 0xFF;
             }
             data        = cast(u8, sum & 0xFF);
+            zero        = data == 0;
         }
 
         if(ctrl_alu_bit_rd) {
