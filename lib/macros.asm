@@ -53,7 +53,7 @@ a:      stz 0x0000                                              ; 6
         lda {src}
         sta [a]
         lda {src}+1
-        sta [a], 1
+        sta [a+1]
         jmp b
 a:      nop
         nop

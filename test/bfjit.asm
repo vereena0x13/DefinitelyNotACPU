@@ -11,8 +11,9 @@
 
 
 
+CODE:                   #d "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++."
 ;CODE:                  #d "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+." ;>++."
-CODE:                   #d "+++++++++++[>++++++>+++++++++>++++++++>++++>+++>+<<<<<<-]>++++++.>++.+++++++..+++.>>.>-.<<-.<.+++.------.--------.>>>+."
+;CODE:                   #d "+++++++++++[>++++++>+++++++++>++++++++>++++>+++>+<<<<<<-]>++++++.>++.+++++++..+++.>>.>-.<<-.<.+++.------.--------.>>>+."
 CODELEN                 = $ - CODE
 TAPE_SIZE               = 0x100
 
@@ -58,6 +59,7 @@ bf_compile:             jmp .entry
     .pc:                #res 2
     .t0:                #res 2
     .t1:                #res 2
+    .t2:                #res 2
 
     #ruledef {
         emit => asm {
@@ -76,31 +78,10 @@ bf_compile:             jmp .entry
             emit #({addr}[15:8])`8
         }
 
-        emit_lda_ind {addr: u16} => asm {
-            ; lda {addr}
-            emit_ldam {addr}
-            
-            ; sta a+1
+        emit_sta {addr: u16} => asm {
             emit #op_sta
-            mov16 .t0, .pc
-            emit #0x00
-            emit #0x00
-            
-            ; lda {addr}+1
-            emit_ldam {addr}+1
-            
-            ; sta a+2
-            emit #op_sta
-            mov16 .t1, .pc
-            emit #0x00
-            emit #0x00
-
-; a:        lda 0x0000
-            emit #op_ldam
-            mov16 [.t0], .pc
-            emit #0x00
-            mov16 [.t1], .pc
-            emit #0x00
+            emit #({addr}[7:0])`8
+            emit #({addr}[15:8])`8
         }
     }
 
@@ -136,15 +117,22 @@ bf_compile:             jmp .entry
                         jmp .lf
         ..left:         ; TODO
                         jmp .lf
-        ..inc:          ; TODO
+        ..inc:          call .emit_ld_from_dp
+                        emit #op_inc
+                        call .emit_st_to_dp
                         jmp .lf
-        ..dec:          ; TODO
+        ..dec:          ;call .emit_ld_from_dp
+                        ;emit #op_dec
+                        ;call .emit_st_to_dp
                         jmp .lf
-        ..putc:         ; TODO
+        ..putc:         ;call .emit_ld_from_dp
+                        ;emit_sta LCDDAT
                         jmp .lf
-        ..open:         ; TODO
+        ..open:         ;call .emit_ld_from_dp
+                        ; TODO
                         jmp .lf
-        ..close:        ; TODO
+        ..close:        ;call .emit_ld_from_dp
+                        ; TODO
                         jmp .lf
 
     .lf:
@@ -154,16 +142,83 @@ bf_compile:             jmp .entry
                         ret
 
     .emit_ld_from_dp: 
-                        emit_lda_ind bf_dp
-
+                        ; lda {addr}
+                        emit_ldam bf_dp
+                        ; sta a+1
+                        emit #op_sta
+                        mov16 .t0, .pc
+                        emit #0x00
+                        emit #0x00
+                        ; lda {addr}+1
+                        emit_ldam bf_dp+1
+                        ; sta a+2
+                        emit #op_sta
+                        mov16 .t1, .pc
+                        emit #0x00
+                        emit #0x00
+            ; a:        lda 0x0000
+                        emit #op_ldam
+                        mov16 [.t0], .pc
+                        emit #0x00
+                        mov16 [.t1], .pc
+                        emit #0x00
                         ret
 
-    .emit_st_to_dp:     ; TODO
+    .emit_st_to_dp:     
+                        ; sta a+1
+;                        emit #op_sta
+;                        mov16 .t2, .pc
+;                        emit #0x00
+;                        emit #0x00
+;                        ; lda {addr}
+;                        emit_ldam bf_dp
+;                        ; sta a+1
+;                        emit #op_sta
+;                        mov16 .t0, .pc
+;                        emit #0x00
+;                        emit #0x00
+;                        ; lda {addr}+1
+;                        emit_ldam bf_dp+1
+;                        ; sta a+2
+;                        emit #op_sta
+;                        mov16 .t1, .pc
+;                        emit #0x00
+;                        emit #0x00
+;            ; a:        lda #0x00
+;                        emit #op_ldai
+;                        mov16 [.t2], .pc
+;                        emit #0x00
+;                        ; sta 0x0000
+;                        emit #op_sta
+;                        mov16 [.t0], .pc
+;                        emit #0x00
+;                        mov16 [.t1], .pc
+;                        emit #0x00
+                        ret
+
+
+bf_clear_tape:          st16 bf_dp, #(bf_tape + TAPE_SIZE)
+.clear_loop:            dec16 bf_dp
+                        stz [bf_dp]
+                        lda #bf_tape[15:8]
+                        cmp bf_dp+1
+                        jnz .clear_loop
+                        lda #bf_tape[7:0]
+                        cmp bf_dp
+                        jnz .clear_loop
                         ret
 
 
 
-bf_dp:                  #d16 le(0x8000) ; #res 2
+bf_dp:                  #res 2
 
-#align 1024*4
+
+JITBUF_ADDR = 0x4000
+TAPE_ADDR   = 0x6000
+
+#assert $ < JITBUF_ADDR
+#addr JITBUF_ADDR
 bf_jitbuf:
+
+#addr TAPE_ADDR
+bf_tape:

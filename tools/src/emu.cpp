@@ -165,6 +165,7 @@ struct CPU {
 
 
         if(ctrl_ram_wr && addr == 0xCCCC) printf("%02X\n", data);
+        if(ctrl_ram_wr && addr == 0x7F01) putchar(data);
     }
 };
 
@@ -183,7 +184,7 @@ s32 emulate(cstr file) {
 
     while(cpu->pc != 0xFFFF) cpu->cycle();
 
-    hexdump(cpu->ram, 0x700);
+    //hexdump(cpu->ram + 0x0600, 0x200);
 
     cpu->free();
     xfree(cpu);
