@@ -107,12 +107,6 @@ bf_compile:             jmp .entry
     .entry:             st16 .cptr, #CODE
                         st16 .pc, #bf_jitbuf
 
-                        lda .pc+1
-                        sta 0xCCCC
-                        lda .pc
-                        sta 0xCCCC
-                        ret
-
     .lh:                lda .cptr+1
                         cmp #(CODE + CODELEN)[15:8]
                         jnz .lb

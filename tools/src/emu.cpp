@@ -33,8 +33,8 @@ struct CPU {
         u32 uinsn                   = get_uinsn(ir, upc, flags); 
 
 
-        auto insn_name = ir < OP_COUNT ? INSN_NAME[ir] : "???";
-        printf("%04X:  %02X %s %02X  %X  %02X %02X %04X\n", pc, ir, insn_name, upc, flags, a, b, mar);
+        //auto insn_name = ir < OP_COUNT ? INSN_NAME[ir] : "???";
+        //printf("%04X:  %02X %s %02X  %X  %02X %02X %04X\n", pc, ir, insn_name, upc, flags, a, b, mar);
 
         //bool ctrl_d0                = (uinsn & SR_D0) == SR_D0;
         //bool ctrl_d1                = (uinsn & SR_D1) == SR_D1;
@@ -91,10 +91,23 @@ struct CPU {
 
 
         if(ctrl_alu_rd) {
-            u16 sum     = a + (ctrl_alu_xorb ? ~b : b) + (ctrl_alu_ci ? 1 : 0);
+            // NOTE TODO: hack
+            u8 c        = ctrl_alu_ci ? 1 : 0;
+            u16 sum;
+            if(ctrl_alu_xorb) {
+                sum     = a - b + c - 1;
+                zero    = data == 0;
+                carry   = (sum & 0x100) == 0;
+            } else {
+                sum     = a + b + c;
+                zero    = data == 0;
+                carry   = sum > 0xFF;
+            }
             data        = cast(u8, sum & 0xFF);
-            zero        = data == 0;
-            carry       = (sum & 0xFF00) != 0;
+            //u16 sum     = a + (ctrl_alu_xorb ? ~b : b) + c;
+            //data        = cast(u8, sum & 0xFF);
+            //zero        = data == 0;
+            //carry       = (sum & 0xFF00) != 0;
         }
 
         if(ctrl_alu_bit_rd) {
