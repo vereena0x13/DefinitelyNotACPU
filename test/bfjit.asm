@@ -25,6 +25,11 @@ start:                  lcd_init
                         lcd_goto 0, 0
 
                         call bf_compile
+                        call bf_clear_tape
+
+                        nop
+                        jmp bf_jitbuf
+bfdone:                                     
 
                         lcd_goto 0, 1
                         lda #"B"
@@ -72,16 +77,28 @@ bf_compile:             jmp .entry
             emit
         }
 
-        emit_ldam {addr: u16} => asm {
-            emit #op_ldam
+        emit_addr {addr: u16} => asm {
             emit #({addr}[7:0])`8
             emit #({addr}[15:8])`8
         }
 
+        emit_ldam {addr: u16} => asm {
+            emit #op_ldam
+            emit_addr {addr}
+        }
+
         emit_sta {addr: u16} => asm {
             emit #op_sta
-            emit #({addr}[7:0])`8
-            emit #({addr}[15:8])`8
+            emit_addr {addr}
+        }
+
+        emit_jmp {addr: u16} => asm {
+            emit #op_jmp
+            emit_addr {addr}
+        }
+
+        emit_ret => asm {
+            ; TODO
         }
     }
 
@@ -125,8 +142,8 @@ bf_compile:             jmp .entry
                         ;emit #op_dec
                         ;call .emit_st_to_dp
                         jmp .lf
-        ..putc:         ;call .emit_ld_from_dp
-                        ;emit_sta LCDDAT
+        ..putc:         call .emit_ld_from_dp
+                        emit_sta LCDDAT
                         jmp .lf
         ..open:         ;call .emit_ld_from_dp
                         ; TODO
@@ -138,7 +155,12 @@ bf_compile:             jmp .entry
     .lf:
                         inc16 .cptr
                         jmp .lh
-    .end:               
+
+    .end:               emit_jmp bfdone ; TODO: replace with emit_ret
+                        lda .pc+1
+                        sta 0xcccc
+                        lda .pc
+                        sta 0xcccc
                         ret
 
     .emit_ld_from_dp: 
