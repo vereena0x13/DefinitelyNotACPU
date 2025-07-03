@@ -32,7 +32,6 @@ struct CPU {
     void cycle() {
         u32 uinsn                   = get_uinsn(ir, upc, flags); 
 
-
         //auto insn_name = ir < OP_COUNT ? INSN_NAME[ir] : "???";
         //printf("%04X:  %02X %s %02X  %X  %02X %02X %04X\n", pc, ir, insn_name, upc, flags, a, b, mar);
 
@@ -85,9 +84,6 @@ struct CPU {
         if(ctrl_addr_lo_to_d)   data = cast(u8, addr & 0xFF);
         if(ctrl_addr_hi_to_d)   data = cast(u8, (addr >> 8) & 0xFF);
         if(ctrl_ram_rd)         data = ram[addr];
-        
-        if(ctrl_d_to_mar_lo)    _mar_lo = data;
-        if(ctrl_d_to_mar_hi)    _mar_hi = data;
 
 
         if(ctrl_alu_rd) {
@@ -130,7 +126,8 @@ struct CPU {
                             break;
                         }
                         case ALU_BIT_NOT: {
-                            data = ~a;
+                            unreachable();
+                            //data = ~a;
                             break;
                         }
                         default: {
@@ -146,6 +143,10 @@ struct CPU {
                 }
             }
         }
+
+
+        if(ctrl_d_to_mar_lo)    _mar_lo     = data;
+        if(ctrl_d_to_mar_hi)    _mar_hi     = data;
 
 
         if(ctrl_pc_ld)          pc          = addr;

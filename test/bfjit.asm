@@ -1,7 +1,6 @@
 #include "../arch/isa.asm"
 
                         jmp start
-                        #d16 (bf_jitbuf`16)
 
 #include "../lib/macros.asm"
 #include "../lib/stack.asm"
@@ -19,13 +18,12 @@ TAPE_SIZE               = 0x100
 
 
 
-
 start:                  lcd_init
                         lcd_clear
                         lcd_goto 0, 0
 
                         call bf_compile
-                        ;call bf_clear_tape
+                        call bf_clear_tape
 
                         jmp bf_jitbuf
 bfdone:                                     
@@ -148,9 +146,9 @@ bf_compile:             jmp .entry
                         emit #op_inc
                         call .emit_st_to_dp
                         jmp .lf
-        ..dec:          ;call .emit_ld_from_dp
-                        ;emit #op_dec
-                        ;call .emit_st_to_dp
+        ..dec:          call .emit_ld_from_dp
+                        emit #op_dec
+                        call .emit_st_to_dp
                         jmp .lf
         ..putc:         call .emit_ld_from_dp
                         emit_sta LCDDAT
@@ -203,7 +201,7 @@ bf_compile:             jmp .entry
                         ; sta a+1
                         emit #op_sta
                         mov16 .t0, .pc
-                        emit #0x00
+                        emit #0x00 
                         emit #0x00
                         ; lda {addr}+1
                         emit_ldam bf_dp+1

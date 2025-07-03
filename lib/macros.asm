@@ -45,19 +45,11 @@ a:      stz 0x0000                                              ; 6
     }
 
 
-    mov16 [{dst: u16}], {src: u16} => asm {                     ; 170 cy
-        lda [{dst}]                                             ; 30
-        sta a                                                   ; 6
-        lda [{dst}+1]                                           ; 30
-        sta a+1                                                 ; 6
-        lda {src}                                               ; 6
-        sta [a]                                                 ; 40
-        lda {src}+1                                             ; 6
-        sta [a+1]                                               ; 40
-        jmp b                                                   ; 6
-a:      nop                                                     ; 
-        nop                                                     ; 
-b:
+    mov16 [{dst: u16}], {src: u16} => asm {                    
+        lda {src}
+        sta [{dst}]
+        lda {src}+1
+        sta [{dst}], 1
     }
 
 
