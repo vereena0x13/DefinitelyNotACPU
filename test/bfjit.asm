@@ -25,9 +25,8 @@ start:                  lcd_init
                         lcd_goto 0, 0
 
                         call bf_compile
-                        call bf_clear_tape
+                        ;call bf_clear_tape
 
-                        nop
                         jmp bf_jitbuf
 bfdone:                                     
 
@@ -54,6 +53,14 @@ bfdone:
                         spin
 
 
+#ruledef {
+    print16 {addr: u16} => asm {
+        lda {addr}+1
+        sta 0xCCCD
+        lda {addr}
+        sta 0xCCCC
+    }
+}
 
 
 ; NOTE TODO: this is dumb lmao, and not _that_ beneficial -- but.. w/e idfk man,
@@ -114,6 +121,8 @@ bf_compile:             jmp .entry
     .lb:                
                         lda [.cptr]
 
+                        #res 5
+
                         cmp #">"
                         jz ..right
                         cmp #"<"
@@ -129,6 +138,7 @@ bf_compile:             jmp .entry
                         cmp #"]"
                         jz ..close
                         jmp .lf
+                        nop
 
         ..right:        ; TODO
                         jmp .lf
@@ -157,10 +167,6 @@ bf_compile:             jmp .entry
                         jmp .lh
 
     .end:               emit_jmp bfdone ; TODO: replace with emit_ret
-                        lda .pc+1
-                        sta 0xcccc
-                        lda .pc
-                        sta 0xcccc
                         ret
 
     .emit_ld_from_dp: 
@@ -188,34 +194,34 @@ bf_compile:             jmp .entry
 
     .emit_st_to_dp:     
                         ; sta a+1
-;                        emit #op_sta
-;                        mov16 .t2, .pc
-;                        emit #0x00
-;                        emit #0x00
-;                        ; lda {addr}
-;                        emit_ldam bf_dp
-;                        ; sta a+1
-;                        emit #op_sta
-;                        mov16 .t0, .pc
-;                        emit #0x00
-;                        emit #0x00
-;                        ; lda {addr}+1
-;                        emit_ldam bf_dp+1
-;                        ; sta a+2
-;                        emit #op_sta
-;                        mov16 .t1, .pc
-;                        emit #0x00
-;                        emit #0x00
-;            ; a:        lda #0x00
-;                        emit #op_ldai
-;                        mov16 [.t2], .pc
-;                        emit #0x00
-;                        ; sta 0x0000
-;                        emit #op_sta
-;                        mov16 [.t0], .pc
-;                        emit #0x00
-;                        mov16 [.t1], .pc
-;                        emit #0x00
+                        emit #op_sta
+                        mov16 .t2, .pc
+                        emit #0x00
+                        emit #0x00
+                        ; lda {addr}
+                        emit_ldam bf_dp
+                        ; sta a+1
+                        emit #op_sta
+                        mov16 .t0, .pc
+                        emit #0x00
+                        emit #0x00
+                        ; lda {addr}+1
+                        emit_ldam bf_dp+1
+                        ; sta a+2
+                        emit #op_sta
+                        mov16 .t1, .pc
+                        emit #0x00
+                        emit #0x00
+            ; a:        lda #0x00
+                        emit #op_ldai
+                        mov16 [.t2], .pc
+                        emit #0x00
+                        ; sta 0x0000
+                        emit #op_sta
+                        mov16 [.t0], .pc
+                        emit #0x00
+                        mov16 [.t1], .pc
+                        emit #0x00
                         ret
 
 

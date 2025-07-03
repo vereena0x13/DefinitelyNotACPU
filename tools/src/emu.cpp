@@ -165,6 +165,7 @@ struct CPU {
 
 
         if(ctrl_ram_wr && addr == 0xCCCC) printf("%02X\n", data);
+        if(ctrl_ram_wr && addr == 0xCCCD) printf("%02X", data);
         if(ctrl_ram_wr && addr == 0x7F01) putchar(data);
     }
 };
