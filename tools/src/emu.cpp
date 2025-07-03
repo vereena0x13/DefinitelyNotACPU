@@ -91,10 +91,9 @@ struct CPU {
 
 
         if(ctrl_alu_rd) {
-            // NOTE TODO: hack
-            u8 c        = ctrl_alu_ci ? 1 : 0;
             u16 sum;
-            if(ctrl_alu_xorb) {
+            u8 c        = ctrl_alu_ci ? 1 : 0;
+            if(ctrl_alu_xorb) { // NOTE TODO: hack
                 sum     = a - b + c - 1;
                 zero    = data == 0;
                 carry   = (sum & 0x100) == 0;
@@ -104,10 +103,6 @@ struct CPU {
                 carry   = sum > 0xFF;
             }
             data        = cast(u8, sum & 0xFF);
-            //u16 sum     = a + (ctrl_alu_xorb ? ~b : b) + c;
-            //data        = cast(u8, sum & 0xFF);
-            //zero        = data == 0;
-            //carry       = (sum & 0xFF00) != 0;
         }
 
         if(ctrl_alu_bit_rd) {
