@@ -9,7 +9,6 @@
 #include "../lib/extra/lcd_hex.asm"
 
 
-
 CODE:                   #d "++++++[>++++++++++<-]>+++++."
 ;CODE:                  #d "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+." ;>++."
 ;CODE:                   #d "+++++++++++[>++++++>+++++++++>++++++++>++++>+++>+<<<<<<-]>++++++.>++.+++++++..+++.>>.>-.<<-.<.+++.------.--------.>>>+."
@@ -41,8 +40,6 @@ start:                  lcd_init
                         call bf_compile
                         call bf_clear_tape
 
-                        putc #10
-                        print16 bf_dp
                         putc #10
 
                         jmp bf_jitbuf
@@ -93,8 +90,8 @@ bf_compile:             jmp .entry
         }
 
         emit_addr {addr: u16} => asm {
-            emit #({addr}[7:0])`8
-            emit #({addr}[15:8])`8
+            emit #lo({addr})
+            emit #hi({addr})
         }
 
         emit_ldam {addr: u16} => asm {
@@ -126,10 +123,10 @@ bf_compile:             jmp .entry
                         st16 .pc, #bf_jitbuf
 
     .lh:                lda .cptr+1
-                        cmp #(CODE + CODELEN)[15:8]
+                        cmp #hi(CODE + CODELEN)
                         jnz .lb
                         lda .cptr
-                        cmp #(CODE + CODELEN)[7:0]
+                        cmp #lo(CODE + CODELEN)
                         jz .end
     .lb:                
                         lda [.cptr]
@@ -258,10 +255,10 @@ bf_compile:             jmp .entry
 bf_clear_tape:          st16 bf_dp, #(bf_tape + TAPE_SIZE)
 .clear_loop:            dec16 bf_dp
                         stz [bf_dp]
-                        lda #bf_tape[15:8]
+                        lda #hi(bf_tape)
                         cmp bf_dp+1
                         jnz .clear_loop
-                        lda #bf_tape[7:0]
+                        lda #lo(bf_tape)
                         cmp bf_dp
                         jnz .clear_loop
                         ret

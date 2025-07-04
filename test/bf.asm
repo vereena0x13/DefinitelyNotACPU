@@ -48,18 +48,18 @@ brainfuck:              st16 bf_ip, #CODE
                         st16 bf_dp, #(tape + 0x100)
 .clear_loop:            dec16 bf_dp
                         stz [bf_dp]
-                        lda #tape[15:8]
+                        lda #hi(tape)
                         cmp bf_dp+1
                         jnz .clear_loop
-                        lda #tape[7:0]
+                        lda #lo(tape)
                         cmp bf_dp
                         jnz .clear_loop
 .bfloop:
                         lda bf_ip+1
-                        cmp #(CODE + CODELEN)[15:8]
+                        cmp #hi(CODE + CODELEN
                         jnz .bfloop1
                         lda bf_ip
-                        cmp #(CODE + CODELEN)[7:0]
+                        cmp #lo(CODE + CODELEN)
                         jz .bfdone
 .bfloop1:
                         lda [bf_ip]
