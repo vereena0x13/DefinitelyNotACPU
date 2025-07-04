@@ -1,10 +1,12 @@
+port := "/dev/ttyUSB0"
+
 ucode:
     customasm -f hexcomma -o cpu_ctrl/ucode_zc.h -dFLAG_Z=0 -dFLAG_C=0 arch/ucode.asm
     customasm -f hexcomma -o cpu_ctrl/ucode_Zc.h -dFLAG_Z=1 -dFLAG_C=0 arch/ucode.asm
     customasm -f hexcomma -o cpu_ctrl/ucode_zC.h -dFLAG_Z=0 -dFLAG_C=1 arch/ucode.asm
     customasm -f hexcomma -o cpu_ctrl/ucode_ZC.h -dFLAG_Z=1 -dFLAG_C=1 arch/ucode.asm
 
-program prog port="/dev/ttyUSB0": (ctrl prog)
+program prog: (ctrl prog)
     arduino-cli upload -b arduino:avr:nano -p {{port}} cpu_ctrl
 
 ctrl prog: ucode (asm prog)

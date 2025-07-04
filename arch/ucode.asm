@@ -43,7 +43,7 @@ FLAG_C                  = 0
 
 
 
-#addr opaddr(op_ldz)    ; 2 cy
+#addr opaddr(op_ldz)    ; 2 cysou
                         uinsn pc_rd | ram_rd | ir_ld
                         urst pc_inc | a_ld
 
