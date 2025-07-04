@@ -9,26 +9,30 @@
 #include "../lib/extra/lcd_hex.asm"
 
 
-CODE:                   #d "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++.>++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++.<.>.\0"
-;CODE:                   #d "++++++[>++++++++++<-]>+++++.\0"
+
+
+;CODE:                   #d "++[->+<]>.\0"
+;CODE:                   #d "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++.>++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++.<.>.\0"
+;CODE:                   #d "++++++[->++++++++++<]>+++++.\0"
 ;CODE:                  #d "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+." ;>++.\0"
-;CODE:                   #d "+++++++++++[>++++++>+++++++++>++++++++>++++>+++>+<<<<<<-]>++++++.>++.+++++++..+++.>>.>-.<<-.<.+++.------.--------.>>>+.\0"
+CODE:                   #d "+++++++++++[>++++++>+++++++++>++++++++>++++>+++>+<<<<<<-]>++++++.>++.+++++++..+++.>>.>-.<<-.<.+++.------.--------.>>>+.\0"
 CODELEN                 = $ - CODE
 TAPE_SIZE               = 0x100
 
 
 
 #ruledef {
+    putc #{imm: u8} => asm {
+        lda #{imm}
+        sta LCDDAT
+    }
+    
     print16 {addr: u16} => asm {
         lda {addr}+1
         sta 0xCCCD
         lda {addr}
         sta 0xCCCC
-    }
-
-    putc #{imm: u8} => asm {
-        lda #{imm}
-        sta LCDDAT
+        putc #10    
     }
 }
 
@@ -41,11 +45,8 @@ start:                  lcd_init
                         call bf_compile
                         call bf_clear_tape
 
-                        putc #10
-
                         jmp bf_jitbuf
-bfdone:                 putc #10
-                        putc #10
+bfdone:                 ;putc #10
 
                         lcd_goto 0, 1
                         putc #"B"
@@ -55,13 +56,11 @@ bfdone:                 putc #10
                         putc #"I"
                         putc #"E"
                         putc #"S"
-                        putc #10
 
                         ;#res 1024*8
                         ;jmp start
 
-                        putc #10
-                        jmp 0xFFFF
+                        ;jmp 0xFFFF
 
                         spin
 
@@ -112,9 +111,9 @@ bf_compile:             jmp .entry
             emit #{imm}
         }
 
-        emit_ret => asm {
-            ; TODO
-        }
+        ;emit_ret => asm {
+        ;    ; TODO
+        ;}
     }
 
     .entry:             st16 .cptr, #CODE
@@ -169,24 +168,40 @@ bf_compile:             jmp .entry
         ..putc:         call .emit_ld_from_dp
                         emit_sta LCDDAT
                         jmp .lf
-        ..open:         call .emit_ld_from_dp
+        ..open:         push16 .pc
+                        call .emit_ld_from_dp
                         emit_cmpi #0
                         emit #op_jz
                         push16 .pc
                         emit_addr 0x0000
-                        push16 .pc
                         jmp .lf
         ..close:        pop16 .t1
                         pop16 .t0
-                        call .emit_ld_from_dp
-                        emit_cmpi #0
-                        emit #op_jnz
-                        lda .t1
+                        emit #op_jmp
+                        lda .t0
                         emit
-                        lda .t1+1
+                        lda .t0+1
                         emit
-                        mov16 [.t0], .pc
+                        mov16 [.t1], .pc                   
                         jmp .lf
+        ;..open:         call .emit_ld_from_dp
+        ;                emit_cmpi #0
+        ;                emit #op_jz
+        ;                push16 .pc
+        ;                emit_addr 0x0000
+        ;                push16 .pc
+        ;                jmp .lf
+        ;..close:        pop16 .t1
+        ;                pop16 .t0
+        ;                call .emit_ld_from_dp
+        ;                emit_cmpi #0
+        ;                emit #op_jnz
+        ;                lda .t1
+        ;                emit
+        ;                lda .t1+1
+        ;                emit
+        ;                mov16 [.t0], .pc
+        ;                jmp .lf
 
     .lf:                inc16 .cptr
                         jmp .lh

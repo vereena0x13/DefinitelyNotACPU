@@ -30,10 +30,7 @@ struct CPU {
     }
 
     void cycle() {
-        u32 uinsn                   = get_uinsn(ir, upc, flags); 
-
-        //auto insn_name = ir < OP_COUNT ? INSN_NAME[ir] : "???";
-        //printf("%04X:  %02X %s %02X  %X  %02X %02X %04X\n", pc, ir, insn_name, upc, flags, a, b, mar);
+        u32 uinsn                   = get_uinsn(ir, upc, flags);
 
         //bool ctrl_d0                = (uinsn & SR_D0) == SR_D0;
         //bool ctrl_d1                = (uinsn & SR_D1) == SR_D1;
