@@ -21,46 +21,26 @@ TAPE_SIZE               = 0x100
 
 
 
-#ruledef {
-    putc #{imm: u8} => asm {
-        lda #{imm}
-        sta LCDDAT
-    }
-    
-    print16 {addr: u16} => asm {
-        lda {addr}+1
-        sta 0xCCCD
-        lda {addr}
-        sta 0xCCCC
-        putc #10    
-    }
-}
-
-
-
 start:                  lcd_init
-                        lcd_clear
-                        lcd_goto 0, 0
 
                         call bf_compile
-                        call bf_clear_tape
 
-                        jmp bf_jitbuf
-bfdone:                 ;putc #10
-
+bfstart:                
+                        lcd_clear
                         lcd_goto 0, 1
-                        putc #"B"
-                        putc #"O"
-                        putc #"O"
-                        putc #"B"
-                        putc #"I"
-                        putc #"E"
-                        putc #"S"
-
-                        ;#res 1024*8
-                        ;jmp start
-
-                        ;jmp 0xFFFF
+                        lda counter+1
+                        lcd_write_hex_byte
+                        lda counter
+                        lcd_write_hex_byte
+                        
+                        lcd_goto 0, 0
+                        call bf_clear_tape
+                        jmp bf_jitbuf
+bfdone:                
+                        inc16 counter
+                        
+                        spin #0x0200
+                        jmp bfstart
 
                         spin
 
@@ -274,6 +254,7 @@ bf_clear_tape:          st16 bf_dp, #(bf_tape + TAPE_SIZE)
 
 
 bf_dp:                  #res 2
+counter:                #d16 0x0000
 
 
 JITBUF_ADDR = 0x4000

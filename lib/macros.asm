@@ -105,4 +105,28 @@ a:      sta 0x0000                                              ; 6
     spin => asm {                                               ; 6 cy
 l:      jmp l                                                   ; 6
     }
+
+
+    spin #{imm: u16} => asm {
+        lda #lo({imm})
+        sta a
+        lda #hi({imm})
+        sta a+1
+l:      lda a+1
+        cmp #0
+        jnz c
+        lda a
+        cmp #0
+        jz b
+c:      lda a
+        sub #1
+        sta a
+        lda a+1
+        sbc #0
+        sta a+1
+        jmp l
+a:      nop
+        nop
+b:
+    }
 }
