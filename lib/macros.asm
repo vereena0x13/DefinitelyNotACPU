@@ -37,7 +37,7 @@ a:      stz 0x0000                                              ; 6
         sta {addr}+1                                            ; 6
     }
 
-    mov16 {dst: u16}, {src: u16} => asm {                       ; 24
+    mov16 {dst: u16}, {src: u16} => asm {                       ; 24 cy
         lda {src}                                               ; 6
         sta {dst}                                               ; 6
         lda {src}+1                                             ; 6
@@ -45,11 +45,11 @@ a:      stz 0x0000                                              ; 6
     }
 
 
-    mov16 [{dst: u16}], {src: u16} => asm {                    
-        lda {src}
-        sta [{dst}]
-        lda {src}+1
-        sta [{dst}], 1
+    mov16 [{dst: u16}], {src: u16} => asm {                     ; 100 cy
+        lda {src}                                               ; 6
+        sta [{dst}]                                             ; 40
+        lda {src}+1                                             ; 6
+        sta [{dst}], 1                                          ; 48
     }
 
 

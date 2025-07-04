@@ -10,11 +10,27 @@
 
 
 
-CODE:                   #d "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++."
+CODE:                   #d "++++++[>++++++++++<-]>+++++."
 ;CODE:                  #d "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+." ;>++."
 ;CODE:                   #d "+++++++++++[>++++++>+++++++++>++++++++>++++>+++>+<<<<<<-]>++++++.>++.+++++++..+++.>>.>-.<<-.<.+++.------.--------.>>>+."
 CODELEN                 = $ - CODE
 TAPE_SIZE               = 0x100
+
+
+
+#ruledef {
+    print16 {addr: u16} => asm {
+        lda {addr}+1
+        sta 0xCCCD
+        lda {addr}
+        sta 0xCCCC
+    }
+
+    putc #{imm: u8} => asm {
+        lda #{imm}
+        sta LCDDAT
+    }
+}
 
 
 
@@ -24,6 +40,10 @@ start:                  lcd_init
 
                         call bf_compile
                         call bf_clear_tape
+
+                        putc #10
+                        print16 bf_dp
+                        putc #10
 
                         jmp bf_jitbuf
 bfdone:                                     
@@ -49,16 +69,6 @@ bfdone:
                         jmp 0xFFFF
 
                         spin
-
-
-#ruledef {
-    print16 {addr: u16} => asm {
-        lda {addr}+1
-        sta 0xCCCD
-        lda {addr}
-        sta 0xCCCC
-    }
-}
 
 
 ; NOTE TODO: this is dumb lmao, and not _that_ beneficial -- but.. w/e idfk man,
@@ -102,6 +112,11 @@ bf_compile:             jmp .entry
             emit_addr {addr}
         }
 
+        emit_cmpi #{imm: u8} => asm {
+            emit #op_cmpi
+            emit #{imm}
+        }
+
         emit_ret => asm {
             ; TODO
         }
@@ -119,8 +134,6 @@ bf_compile:             jmp .entry
     .lb:                
                         lda [.cptr]
 
-                        #res 5
-
                         cmp #">"
                         jz ..right
                         cmp #"<"
@@ -136,11 +149,24 @@ bf_compile:             jmp .entry
                         cmp #"]"
                         jz ..close
                         jmp .lf
-                        nop
 
-        ..right:        ; TODO
+        ..right:        emit_ldam bf_dp
+                        emit #op_addi
+                        emit #1
+                        emit_sta bf_dp
+                        emit_ldam bf_dp+1
+                        emit #op_adci
+                        emit #0
+                        emit_sta bf_dp+1
                         jmp .lf
-        ..left:         ; TODO
+        ..left:         emit_ldam bf_dp
+                        emit #op_subi
+                        emit #1
+                        emit_sta bf_dp
+                        emit_ldam bf_dp+1
+                        emit #op_sbci
+                        emit #0
+                        emit_sta bf_dp+1
                         jmp .lf
         ..inc:          call .emit_ld_from_dp
                         emit #op_inc
@@ -153,15 +179,26 @@ bf_compile:             jmp .entry
         ..putc:         call .emit_ld_from_dp
                         emit_sta LCDDAT
                         jmp .lf
-        ..open:         ;call .emit_ld_from_dp
-                        ; TODO
+        ..open:         call .emit_ld_from_dp
+                        emit_cmpi #0
+                        emit #op_jz
+                        push16 .pc
+                        emit_addr 0x0000
+                        push16 .pc
                         jmp .lf
-        ..close:        ;call .emit_ld_from_dp
-                        ; TODO
+        ..close:        pop16 .t1
+                        pop16 .t0
+                        call .emit_ld_from_dp
+                        emit_cmpi #0
+                        emit #op_jnz
+                        lda .t1
+                        emit
+                        lda .t1+1
+                        emit
+                        mov16 [.t0], .pc
                         jmp .lf
 
-    .lf:
-                        inc16 .cptr
+    .lf:                inc16 .cptr
                         jmp .lh
 
     .end:               emit_jmp bfdone ; TODO: replace with emit_ret
@@ -173,15 +210,13 @@ bf_compile:             jmp .entry
                         ; sta a+1
                         emit #op_sta
                         mov16 .t0, .pc
-                        emit #0x00
-                        emit #0x00
+                        emit_addr 0x0000
                         ; lda {addr}+1
                         emit_ldam bf_dp+1
                         ; sta a+2
                         emit #op_sta
                         mov16 .t1, .pc
-                        emit #0x00
-                        emit #0x00
+                        emit_addr 0x0000
             ; a:        lda 0x0000
                         emit #op_ldam
                         mov16 [.t0], .pc
@@ -194,22 +229,19 @@ bf_compile:             jmp .entry
                         ; sta a+1
                         emit #op_sta
                         mov16 .t2, .pc
-                        emit #0x00
-                        emit #0x00
+                        emit_addr 0x0000
                         ; lda {addr}
                         emit_ldam bf_dp
                         ; sta a+1
                         emit #op_sta
                         mov16 .t0, .pc
-                        emit #0x00 
-                        emit #0x00
+                        emit_addr 0x0000
                         ; lda {addr}+1
                         emit_ldam bf_dp+1
                         ; sta a+2
                         emit #op_sta
                         mov16 .t1, .pc
-                        emit #0x00
-                        emit #0x00
+                        emit_addr 0x0000
             ; a:        lda #0x00
                         emit #op_ldai
                         mov16 [.t2], .pc
