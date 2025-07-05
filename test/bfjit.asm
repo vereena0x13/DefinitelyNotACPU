@@ -107,85 +107,64 @@ bf_compile:             jmp .entry
                         cmp #0
                         jz .end
 
-                        cmp #">"
-                        jz ..right
-                        cmp #"<"
-                        jz ..left
-                        cmp #"+"
-                        jz ..inc
-                        cmp #"-"
-                        jz ..dec
-                        cmp #"."
-                        jz ..putc
-                        cmp #"["
-                        jz ..open
-                        cmp #"]"
-                        jz ..close
-                        jmp .lf
-
-        ..right:        emit_ldam bf_dp
-                        emit #op_addi
-                        emit #1
-                        emit_sta bf_dp
-                        emit_ldam bf_dp+1
-                        emit #op_adci
-                        emit #0
-                        emit_sta bf_dp+1
-                        jmp .lf
-        ..left:         emit_ldam bf_dp
-                        emit #op_subi
-                        emit #1
-                        emit_sta bf_dp
-                        emit_ldam bf_dp+1
-                        emit #op_sbci
-                        emit #0
-                        emit_sta bf_dp+1
-                        jmp .lf
-        ..inc:          call .emit_ld_from_dp
-                        emit #op_inc
-                        call .emit_st_to_dp
-                        jmp .lf
-        ..dec:          call .emit_ld_from_dp
-                        emit #op_dec
-                        call .emit_st_to_dp
-                        jmp .lf
-        ..putc:         call .emit_ld_from_dp
-                        emit_sta LCDDAT
-                        jmp .lf
-        ..open:         push16 .pc
-                        call .emit_ld_from_dp
-                        emit_cmpi #0
-                        emit #op_jz
-                        push16 .pc
-                        emit_addr 0x0000
-                        jmp .lf
-        ..close:        pop16 .t1
-                        pop16 .t0
-                        emit #op_jmp
-                        lda .t0
-                        emit
-                        lda .t0+1
-                        emit
-                        mov16 [.t1], .pc                   
-                        jmp .lf
-        ;..open:         call .emit_ld_from_dp
-        ;                emit_cmpi #0
-        ;                emit #op_jz
-        ;                push16 .pc
-        ;                emit_addr 0x0000
-        ;                push16 .pc
-        ;                jmp .lf
-        ;..close:        pop16 .t1
-        ;                pop16 .t0
-        ;                call .emit_ld_from_dp
-        ;                emit_cmpi #0
-        ;                emit #op_jnz
-        ;                lda .t1
-        ;                emit
-        ;                lda .t1+1
-        ;                emit
-        ;                mov16 [.t0], .pc
-        ;                jmp .lf
+        ..cr:           cmp #">"
+                        jnz ..cl
+                            emit_ldam bf_dp
+                            emit #op_addi
+                            emit #1
+                            emit_sta bf_dp
+                            emit_ldam bf_dp+1
+                            emit #op_adci
+                            emit #0
+                            emit_sta bf_dp+1
+                            jmp .lf
+        ..cl:           cmp #"<"
+                        jnz ..ci
+                            emit_ldam bf_dp
+                            emit #op_subi
+                            emit #1
+                            emit_sta bf_dp
+                            emit_ldam bf_dp+1
+                            emit #op_sbci
+                            emit #0
+                            emit_sta bf_dp+1
+                            jmp .lf
+        ..ci:           cmp #"+"
+                        jnz ..cd
+                            call .emit_ld_from_dp
+                            emit #op_inc
+                            call .emit_st_to_dp
+                            jmp .lf
+        ..cd:           cmp #"-"
+                        jnz ..cp
+                            call .emit_ld_from_dp
+                            emit #op_dec
+                            call .emit_st_to_dp
+                            jmp .lf
+        ..cp:           cmp #"."
+                        jnz ..co
+                            call .emit_ld_from_dp
+                            emit_sta LCDDAT
+                            jmp .lf
+        ..co:           cmp #"["
+                        jnz ..cc
+                            push16 .pc
+                            call .emit_ld_from_dp
+                            emit_cmpi #0
+                            emit #op_jz
+                            push16 .pc
+                            emit_addr 0x0000
+                            jmp .lf
+        ..cc:           cmp #"]"
+                        jnz .lf
+                            pop16 .t1
+                            pop16 .t0
+                            emit #op_jmp
+                            lda .t0
+                            emit
+                            lda .t0+1
+                            emit
+                            mov16 [.t1], .pc                   
 
     .lf:                inc16 .cptr
                         jmp .lh
