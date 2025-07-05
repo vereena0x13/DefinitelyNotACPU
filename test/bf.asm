@@ -56,7 +56,7 @@ brainfuck:              st16 bf_ip, #CODE
                         jnz .clear_loop
 .bfloop:
                         lda bf_ip+1
-                        cmp #hi(CODE + CODELEN
+                        cmp #hi(CODE + CODELEN)
                         jnz .bfloop1
                         lda bf_ip
                         cmp #lo(CODE + CODELEN)
