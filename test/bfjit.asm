@@ -70,29 +70,10 @@ bf_compile:             jmp .entry
             emit
         }
 
-        emit_addr {addr: u16} => asm {
+        emit #{imm: u8}, {addr: u16} => asm {
+            emit #{imm}
             emit #lo({addr})
             emit #hi({addr})
-        }
-
-        emit_ldam {addr: u16} => asm {
-            emit #op_ldam
-            emit_addr {addr}
-        }
-
-        emit_sta {addr: u16} => asm {
-            emit #op_sta
-            emit_addr {addr}
-        }
-
-        emit_jmp {addr: u16} => asm {
-            emit #op_jmp
-            emit_addr {addr}
-        }
-
-        emit_cmpi #{imm: u8} => asm {
-            emit #op_cmpi
-            emit #{imm}
         }
 
         ;emit_ret => asm {
@@ -109,25 +90,25 @@ bf_compile:             jmp .entry
 
         ..cr:           cmp #">"
                         jnz ..cl
-                            emit_ldam bf_dp
+                            emit #op_ldam, bf_dp
                             emit #op_addi
                             emit #1
-                            emit_sta bf_dp
-                            emit_ldam bf_dp+1
+                            emit #op_sta, bf_dp
+                            emit #op_ldam, bf_dp+1
                             emit #op_adci
                             emit #0
-                            emit_sta bf_dp+1
+                            emit #op_sta, bf_dp+1
                             jmp .lf
         ..cl:           cmp #"<"
                         jnz ..ci
-                            emit_ldam bf_dp
+                            emit #op_ldam, bf_dp
                             emit #op_subi
                             emit #1
-                            emit_sta bf_dp
-                            emit_ldam bf_dp+1
+                            emit #op_sta, bf_dp
+                            emit #op_ldam, bf_dp+1
                             emit #op_sbci
                             emit #0
-                            emit_sta bf_dp+1
+                            emit #op_sta, bf_dp+1
                             jmp .lf
         ..ci:           cmp #"+"
                         jnz ..cd
@@ -144,16 +125,18 @@ bf_compile:             jmp .entry
         ..cp:           cmp #"."
                         jnz ..co
                             call .emit_ld_from_dp
-                            emit_sta LCDDAT
+                            emit #op_sta, LCDDAT
                             jmp .lf
         ..co:           cmp #"["
                         jnz ..cc
                             push16 .pc
                             call .emit_ld_from_dp
-                            emit_cmpi #0
+                            emit #op_cmpi
+                            emit #0
                             emit #op_jz
                             push16 .pc
-                            emit_addr 0x0000
+                            emit #0x00
+                            emit #0x00
                             jmp .lf
         ..cc:           cmp #"]"
                         jnz .lf
@@ -169,22 +152,24 @@ bf_compile:             jmp .entry
     .lf:                inc16 .cptr
                         jmp .lh
 
-    .end:               emit_jmp bfdone ; TODO: replace with emit_ret
+    .end:               emit #op_jmp, bfdone ; TODO: replace with emit_ret
                         ret
 
     .emit_ld_from_dp: 
                         ; lda {addr}
-                        emit_ldam bf_dp
+                        emit #op_ldam, bf_dp
                         ; sta a+1
                         emit #op_sta
                         mov16 .t0, .pc
-                        emit_addr 0x0000
+                        emit #0x00
+                        emit #0x00
                         ; lda {addr}+1
-                        emit_ldam bf_dp+1
+                        emit #op_ldam, bf_dp+1
                         ; sta a+2
                         emit #op_sta
                         mov16 .t1, .pc
-                        emit_addr 0x0000
+                        emit #0x00
+                        emit #0x00
             ; a:        lda 0x0000
                         emit #op_ldam
                         mov16 [.t0], .pc
@@ -197,19 +182,22 @@ bf_compile:             jmp .entry
                         ; sta a+1
                         emit #op_sta
                         mov16 .t2, .pc
-                        emit_addr 0x0000
+                        emit #0x00
+                        emit #0x00
                         ; lda {addr}
-                        emit_ldam bf_dp
+                        emit #op_ldam, bf_dp
                         ; sta a+1
                         emit #op_sta
                         mov16 .t0, .pc
-                        emit_addr 0x0000
+                        emit #0x00
+                        emit #0x00
                         ; lda {addr}+1
-                        emit_ldam bf_dp+1
+                        emit #op_ldam, bf_dp+1
                         ; sta a+2
                         emit #op_sta
                         mov16 .t1, .pc
-                        emit_addr 0x0000
+                        emit #0x00
+                        emit #0x00
             ; a:        lda #0x00
                         emit #op_ldai
                         mov16 [.t2], .pc
