@@ -32,6 +32,10 @@ start:                  lcd_init
 bfstart:                
                         lcd_clear
                         lcd_goto 0, 1
+                        lda counter+3
+                        lcd_write_hex_byte
+                        lda counter+2
+                        lcd_write_hex_byte
                         lda counter+1
                         lcd_write_hex_byte
                         lda counter
@@ -41,7 +45,7 @@ bfstart:
                         call bf_clear_tape
                         jmp bf_jitbuf
 bfdone:                
-                        inc16 counter
+                        inc32 counter
                         
                         spin #0x0200
                         jmp bfstart
@@ -224,8 +228,8 @@ bf_clear_tape:          st16 bf_dp, #(bf_tape + TAPE_SIZE)
 
 
 
-bf_dp:                  #res 2
-counter:                #d16 0x0000
+bf_dp:                  #d16 0x0000
+counter:                #d32 0x00000000
 
 
 #assert $ < JITBUF_ADDR
