@@ -8,6 +8,12 @@ import gay.vereena.cpu.Util._
 
 
 
+object GenerateSOC extends App {
+    spinalConfig()
+        .generateVerilog(SOC())
+}
+
+
 object SimulateSOC extends App {
     SimConfig
         .withFstWave
@@ -15,7 +21,7 @@ object SimulateSOC extends App {
         .compile {
             val soc = SOC()
 
-            
+
 
             soc
         }

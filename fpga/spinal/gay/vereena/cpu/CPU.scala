@@ -4,6 +4,8 @@ import spinal.core._
 import spinal.lib._
 import spinal.lib.fsm._
 
+import gay.vereena.cpu.Util._
+
 
 
 case class BusCmd() extends Bundle {
@@ -33,17 +35,49 @@ case class Bus() extends Bundle with IMasterSlave {
 
 case class CPU() extends Component {
     val io = new Bundle {
-        val bus = master(Bus())
+        val bus             = master(Bus())
     }
     import io._
 
 
-    val pc      = Reg(UInt(16 bits)) init(0)
-    val mar     = Reg(UInt(16 bits)) init(0)
-    val ir      = Reg(UInt(8 bits)) init(0)
-    val a       = Reg(UInt(8 bits)) init(0)
-    val b       = Reg(UInt(8 bits)) init(0)
+    val upc                 = Reg(UInt(4 bits)) init(0)
+    val pc                  = Reg(UInt(16 bits)) init(0)
+    val mar                 = Reg(UInt(16 bits)) init(0)
+    val ir                  = Reg(UInt(8 bits)) init(0)
+    val a                   = Reg(UInt(8 bits)) init(0)
+    val b                   = Reg(UInt(8 bits)) init(0)
 
 
+    val ctrl    = new Bundle {
+        val ucode           = Mem(UInt(32 bits), readInts("ucode.bin").map(x => U(x)))
+        val uinsn           = ucode.readAsync(upc)
+        val d               = uinsn(7 downto 0)
+        val d_rd            = uinsn(8)
+        val alu_xorb        = uinsn(9)
+        val alu_ci          = uinsn(10)
+        val alu_bit_rd      = uinsn(11)
+        val pc_rd           = uinsn(12)
+        val pc_inc          = uinsn(13)
+        val pc_ld           = uinsn(14)
+        val mar_rd          = uinsn(15)
+        val mar_lo_ld       = uinsn(16)
+        val mar_hi_ld       = uinsn(17)
+        val a_rd            = uinsn(18)
+        val a_ld            = uinsn(19)
+        val b_ld            = uinsn(20)
+        val flags_ld        = uinsn(21)
+        val upc_rst         = uinsn(22)
+        val ram_rd          = uinsn(23)
+        val ram_wr          = uinsn(24)
+        val ir_ld           = uinsn(25)
+        val addr_lo_to_d    = uinsn(26)
+        val addr_hi_to_d    = uinsn(27)
+        val d_to_mar_lo     = uinsn(29)
+        val d_to_mar_hi     = uinsn(28)
+        val upc_inc         = uinsn(30)
+        val alu_rd          = uinsn(31)
+    }
 
+
+    
 }
