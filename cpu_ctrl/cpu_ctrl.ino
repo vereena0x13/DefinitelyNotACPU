@@ -41,8 +41,8 @@ void panic(u8 a, u8 b, u8 c) {
 #define INSN3                   3                   // D3
 #define INSN4                   4                   // D4
 #define INSN5                   5                   // D5
-#define INSN6                   19                  // C5
-#define INSN7                   18                  // C4
+//#define INSN6                   19                  // C5
+//#define INSN7                   18                  // C4
 
 #define FLAGZ                   6                   // D6
 #define FLAGC                   7                   // D7
@@ -64,8 +64,8 @@ inline u8 __attribute__((always_inline)) read_insn() {
     u8 res = PIND & 0x3C;
     if(PINC & (1 << 3)) res |= 1;
     if(PINC & (1 << 2)) res |= 2;
-    if(PINC & (1 << 5)) res |= 64;
-    if(PINC & (1 << 4)) res |= 128;
+    //if(PINC & (1 << 5)) res |= 64;
+    //if(PINC & (1 << 4)) res |= 128;
     return res;
 }
 

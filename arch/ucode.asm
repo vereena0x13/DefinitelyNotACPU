@@ -9,7 +9,6 @@ FLAG_C                  = 0
 
 #fn opaddr(op)          => op*UMAX*4
 
-
 #bankdef ucode {
     #bits 8
     #size OPMAX*UMAX*4
@@ -25,7 +24,6 @@ FLAG_C                  = 0
         uinsn pc_rd | ram_rd | ir_ld
         uinsn pc_inc
     }
-
 
     i_ld_mar_no_inc => asm {
         uinsn pc_rd | ram_rd | d_to_mar_lo | mar_lo_ld

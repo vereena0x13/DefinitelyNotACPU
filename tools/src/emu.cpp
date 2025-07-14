@@ -30,7 +30,7 @@ struct CPU {
     }
 
     void cycle() {
-        u32 uinsn                   = get_uinsn(ir, upc, flags);
+        u32 uinsn                   = get_uinsn(ir & 0x3F, upc, flags);
 
         //bool ctrl_d0                = (uinsn & SR_D0) == SR_D0;
         //bool ctrl_d1                = (uinsn & SR_D1) == SR_D1;

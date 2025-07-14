@@ -7,5 +7,7 @@ import spinal.lib.fsm._
 
 
 case class SOC() extends Component {
+    val cpu     = CPU()
 
+    
 }

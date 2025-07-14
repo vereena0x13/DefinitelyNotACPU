@@ -40,17 +40,33 @@ case class CPU() extends Component {
     import io._
 
 
+    bus.cmd.write           := False
+    bus.cmd.valid.setAsReg() init(False)
+
+
+    val addr                = UInt(16 bits)
+    val data                = UInt(8 bits)
+
     val upc                 = Reg(UInt(4 bits)) init(0)
     val pc                  = Reg(UInt(16 bits)) init(0)
     val mar                 = Reg(UInt(16 bits)) init(0)
     val ir                  = Reg(UInt(8 bits)) init(0)
     val a                   = Reg(UInt(8 bits)) init(0)
     val b                   = Reg(UInt(8 bits)) init(0)
+    val flags               = new Bundle {
+        val z               = Reg(Bool()) init(False)
+        val c               = Reg(Bool()) init(False)
+    }
 
 
     val ctrl    = new Bundle {
-        val ucode           = Mem(UInt(32 bits), readInts("ucode.bin").map(x => U(x)))
-        val uinsn           = ucode.readAsync(upc)
+        // TODO: really we should just like, parse the microcode out of the ucode_xx.h files in cpu_ctrl.
+        val ucode           = Mem(UInt(32 bits), readInts("ucode.bin").map(x => U((x & 0xFFFFFFFFL).toLong)))
+        
+        val uaddr           = flags.c ## flags.z ## ir(5 downto 0) ## upc
+        val uinsn           = ucode.readAsync(uaddr.asUInt)
+        
+        /*
         val d               = uinsn(7 downto 0)
         val d_rd            = uinsn(8)
         val alu_xorb        = uinsn(9)
@@ -76,8 +92,14 @@ case class CPU() extends Component {
         val d_to_mar_hi     = uinsn(28)
         val upc_inc         = uinsn(30)
         val alu_rd          = uinsn(31)
+        */
     }
 
 
-    
+
+
+
+    bus.cmd.addr            := addr
+    bus.cmd.data            := data
+    // bus.cmd.write           := ctrl.ram_wr
 }
