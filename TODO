@@ -1,6 +1,50 @@
+ - allow reading MARₗₒ and MARₕᵢ onto the data bus? would shave a cycle or two off of stpc.
+   or better yet, replace stpc with something a little less silly? maybe something like jal on RISC-V?
+   of course we can't do that until we have more 16-bit registers.. so. ugh.
+ - more registers! maybe eight 8-bit GPRs? or at least 4. and like, prolly .. uh.. 4(?) 16-bit registers?
+ - use up/down counters for 16-bit registers
+    - this gives us a hardware stack pointer as well as, for example, "source" and "destination" registers
+    - probably also assists the microcode for some instructions that have to read 16-bit values, etc.
+ - hardware support for more complex addressing modes
+    - at a minimum we can assist with indirect memory accesses by adding more 16-bit registers; currently,
+      i don't think there'a any way to do something like `lda [ptr]`, because like, we'd load ptr into MAR,
+      but then we need to load the 16-bit value MAR is pointing to into a 16-bit register which we then load
+      the actual value from [into A] -- but to do that we'd need another 16-bit register; can't use MAR or PC :P
+    - it'd be nice to also support things like, idk, `lda ptr,x` and `lda [ptr],x` where x is either a constant
+      or a register. well, we can already do `lda ptr,#x` since ptr and x are both known by the assembler, so it's
+      just a regular load from some immediate address. but for the other cases... ... i guess like, we want to have
+      the ability to add some number (probably a full 16-bit number?)
+       - would also be handy if we could not just add some offset to some base address (which could be indirect),
+         but also scale it. say, scale by 1, 2, 4, or 8? or 16? that sort of thing.
+      this'd be great for, among many other things, SP-relative addressing. at the beginning of a function we'd like
+      to be able to just subtract n from SP to allocate space for the functions locals and then do things like
+      `lda [sp],#x` or w/e the shit. currently there's a fair bit of overhead involved in doing this kind of thing.
+ - consider whether we want to keep using variable-width instructions or if it'd make sense / be worthwhile to
+   switch to fixed-width instructions. i did it the way it is now because it was the quick and easy thing, but
+   there are definitely benefits to fixed-with instructions. haven't really thought through that dichotomy lately,
+   but i should at some point. 
+ - better (_smarter_) control logic. currently we have a metric fuckton of control lines (lowkey not enough.)
+   and simultaneously we're essentially not using the opcode at all in the decoding process, other than simply
+   as an index to look up what the control lines should be from the "control ROM." we'd like to
+    - reduce the number of control lines needed; reduce redundancy, while increasing functionality
+    - move from this ad-hoc "design" to something that's acutally had some thought put into it...
+ - remove the arduino. or at least, remove it as a component of the cpu itself. currently it's used to generate
+   the RST and CLK signals as well as, essentially, emulate the control ROM. granted, though, using it to emulate
+   the control ROM is _great_ because it makes it so much easier and faster to iterate while developing the microcode.
+   _but_ we at least want to get to a place where we could swap it out with EEPROM(s) and without any other changes
+   needed, ideally. so, we'll eventually want to stop using the arduino for RST and CLK.
+   oh! almost forgot: we're also using it to load code/data into RAM on startup. eventually we'd want to replace that
+   with some sort of bootloader that exists in ROM, but. yeah. again, the obvious advantage: iteration. but.. uh. yeah.
+
  - change the bit shift inputs from B to A so we don't have to copy A into B to shift it
- - remove the bitwise not function from the PLD logic -- er.. fix it.
  - allow loading (and perhaps setting and clearing too, probably?) the Z and C flags individually
     - Z flag should be touched by and, or, xor, but C shouldn't 
+
  - consolidate ctrl.asm, isa.asm, ctrl.h, and isa.h
+ - remove the bitwise not function from the PLD logic -- er.. fix it.
  - automatically check microcode for mistakes causing multiple devices to drive to the same bus
+
+ - what if we had "skip" instructions? i.e. instead of a conditional branch, a conditional skip
+   of the following instruction. i think the simplest way to implement this would be to have a
+   flag that gets set or cleared by the skip instruction and then the following instruction would
+   just skip the correct number of bytes if that flag is set, rather than actually executing normally

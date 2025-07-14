@@ -40,8 +40,8 @@ bfstart:
                         lcd_write_hex_byte
                         lda counter
                         lcd_write_hex_byte
-                        
                         lcd_goto 0, 0
+
                         call bf_clear_tape
                         jmp bf_jitbuf
 bfdone:                
