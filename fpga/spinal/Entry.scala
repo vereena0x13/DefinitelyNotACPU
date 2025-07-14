@@ -5,12 +5,12 @@ import spinal.lib.fsm._
 
 import gay.vereena.cpu._
 import gay.vereena.cpu.Util._
-
+import gay.vereena.cpu.SimExtensions._
 
 
 object GenerateSOC extends App {
     spinalConfig()
-        .generateVerilog(SOC())
+        .generateVerilog(SOC(Some(readBytes("program.bin"))))
 }
 
 
@@ -19,13 +19,15 @@ object SimulateSOC extends App {
         .withFstWave
         .withConfig(spinalConfig())
         .compile {
-            val soc = SOC()
-
-
+            val soc = SOC(Some(readBytes("program.bin")))
 
             soc
         }
         .doSim { soc =>
-            
+            val clk = soc.clockDomain.get
+
+            clk.doResetCycles()
+
+            clk.tick(512)
         }
 }

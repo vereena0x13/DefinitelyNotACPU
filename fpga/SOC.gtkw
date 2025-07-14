@@ -1,0 +1,74 @@
+[*]
+[*] GTKWave Analyzer v3.3.123 (w)1999-2025 BSI
+[*] Mon Jul 14 20:06:33 2025
+[*]
+[dumpfile] "/run/media/vereena/ldata/Projects/DefinitelyNotACPU/fpga/simWorkspace/SOC/test/wave.fst"
+[dumpfile_mtime] "Mon Jul 14 20:06:31 2025"
+[dumpfile_size] 2095
+[savefile] "/run/media/vereena/ldata/Projects/DefinitelyNotACPU/fpga/SOC.gtkw"
+[timestart] 0
+[size] 2560 1365
+[pos] -1286 -6
+*-4.987085 65 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] TOP.
+[treeopen] TOP.SOC.
+[sst_width] 290
+[signals_width] 206
+[sst_expanded] 1
+[sst_vpaned_height] 423
+@28
+TOP.clk
+[color] 1
+TOP.reset
+@200
+-
+@22
+[color] 5
+TOP.SOC.cpu_1.addr[15:0]
+[color] 5
+TOP.SOC.cpu_1.data[7:0]
+@200
+-
+@22
+[color] 3
+TOP.SOC.cpu_1.pc[15:0]
+[color] 5
+TOP.SOC.cpu_1.a[7:0]
+[color] 5
+TOP.SOC.cpu_1.b[7:0]
+@200
+-
+@c00022
+[color] 7
+TOP.SOC.cpu_1.ir[7:0]
+@28
+[color] 7
+(0)TOP.SOC.cpu_1.ir[7:0]
+[color] 7
+(1)TOP.SOC.cpu_1.ir[7:0]
+[color] 7
+(2)TOP.SOC.cpu_1.ir[7:0]
+[color] 7
+(3)TOP.SOC.cpu_1.ir[7:0]
+[color] 7
+(4)TOP.SOC.cpu_1.ir[7:0]
+[color] 7
+(5)TOP.SOC.cpu_1.ir[7:0]
+[color] 7
+(6)TOP.SOC.cpu_1.ir[7:0]
+[color] 7
+(7)TOP.SOC.cpu_1.ir[7:0]
+@1401200
+-group_end
+@28
+[color] 1
+TOP.SOC.cpu_1.flags_c
+[color] 1
+TOP.SOC.cpu_1.flags_z
+@22
+[color] 3
+TOP.SOC.cpu_1.upc[3:0]
+@201
+-
+[pattern_trace] 1
+[pattern_trace] 0

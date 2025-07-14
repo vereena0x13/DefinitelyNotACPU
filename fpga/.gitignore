@@ -4,4 +4,4 @@ project
 target
 gen
 simWorkspace
-ucode.bin
+*.bin

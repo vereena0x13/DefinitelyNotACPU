@@ -81,6 +81,7 @@ case class CPU() extends Component {
 
 
     when(ctrl.pc_rd)        { addr := pc }
+    when(ctrl.pc_inc)       { pc := pc + 1 }
     when(ctrl.mar_rd)       { addr := mar }
     
     when(ctrl.a_rd)         { data := a }           
@@ -135,7 +136,11 @@ case class CPU() extends Component {
     }
 
     when(ctrl.ir_ld)        { ir := data }
-    when(ctrl.upc_inc)      { upc := upc + 1 }
+
+    new ClockingArea(ClockDomain.current.copy(clock = ~ClockDomain.current.readClockWire)) {
+        when(ctrl.upc_inc)      { upc := upc + 1 }
+    }
+
     when(ctrl.upc_rst)      { upc := 0 }
 
     io.addr                 := addr
