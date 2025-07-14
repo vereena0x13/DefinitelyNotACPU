@@ -1,25 +1,37 @@
 [*]
 [*] GTKWave Analyzer v3.3.123 (w)1999-2025 BSI
-[*] Mon Jul 14 20:06:33 2025
+[*] Mon Jul 14 20:57:34 2025
 [*]
 [dumpfile] "/run/media/vereena/ldata/Projects/DefinitelyNotACPU/fpga/simWorkspace/SOC/test/wave.fst"
-[dumpfile_mtime] "Mon Jul 14 20:06:31 2025"
-[dumpfile_size] 2095
+[dumpfile_mtime] "Mon Jul 14 20:17:01 2025"
+[dumpfile_size] 2603
 [savefile] "/run/media/vereena/ldata/Projects/DefinitelyNotACPU/fpga/SOC.gtkw"
 [timestart] 0
 [size] 2560 1365
-[pos] -1286 -6
-*-4.987085 65 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[pos] -1 -1
+*-5.014566 35 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] TOP.
 [treeopen] TOP.SOC.
 [sst_width] 290
-[signals_width] 206
+[signals_width] 339
 [sst_expanded] 1
-[sst_vpaned_height] 423
+[sst_vpaned_height] 427
 @28
 TOP.clk
 [color] 1
 TOP.reset
+@201
+-
+@22
+[color] 5
+TOP.SOC.cpu_1.io_addr[15:0]
+[color] 5
+TOP.SOC.cpu_1.io_read_data[7:0]
+[color] 5
+TOP.SOC.cpu_1.io_write_data[7:0]
+@28
+[color] 1
+TOP.SOC.cpu_1.io_write
 @200
 -
 @22
@@ -68,7 +80,58 @@ TOP.SOC.cpu_1.flags_z
 @22
 [color] 3
 TOP.SOC.cpu_1.upc[3:0]
-@201
+@200
 -
+@800200
+-ctrl
+@28
+[color] 5
+TOP.SOC.cpu_1.ctrl_alu_xorb
+[color] 5
+TOP.SOC.cpu_1.ctrl_alu_ci
+[color] 3
+TOP.SOC.cpu_1.ctrl_alu_bit_rd
+[color] 3
+TOP.SOC.cpu_1.ctrl_pc_rd
+[color] 7
+TOP.SOC.cpu_1.ctrl_pc_inc
+[color] 1
+TOP.SOC.cpu_1.ctrl_pc_ld
+[color] 3
+TOP.SOC.cpu_1.ctrl_mar_rd
+[color] 1
+TOP.SOC.cpu_1.ctrl_mar_lo_ld
+[color] 1
+TOP.SOC.cpu_1.ctrl_mar_hi_ld
+[color] 3
+TOP.SOC.cpu_1.ctrl_a_rd
+[color] 1
+TOP.SOC.cpu_1.ctrl_a_ld
+[color] 1
+TOP.SOC.cpu_1.ctrl_b_ld
+[color] 1
+TOP.SOC.cpu_1.ctrl_flags_ld
+[color] 7
+TOP.SOC.cpu_1.ctrl_upc_rst
+[color] 3
+TOP.SOC.cpu_1.ctrl_ram_rd
+[color] 1
+TOP.SOC.cpu_1.ctrl_ram_wr
+[color] 1
+TOP.SOC.cpu_1.ctrl_ir_ld
+[color] 2
+TOP.SOC.cpu_1.ctrl_addr_lo_to_d
+[color] 2
+TOP.SOC.cpu_1.ctrl_addr_hi_to_d
+[color] 2
+TOP.SOC.cpu_1.ctrl_d_to_mar_lo
+[color] 2
+TOP.SOC.cpu_1.ctrl_d_to_mar_hi
+[color] 7
+TOP.SOC.cpu_1.ctrl_upc_inc
+[color] 3
+TOP.SOC.cpu_1.ctrl_alu_rd
+@1000200
+-ctrl
 [pattern_trace] 1
 [pattern_trace] 0
