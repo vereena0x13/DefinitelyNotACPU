@@ -19,9 +19,28 @@
 #include "vstd.hpp"
 
 
+#include "lexer.cpp"
+
+
 
 
 s32 main(s32 argc, cstr *argv) {
-    printf("ayyy!\n");
+    if(argc < 2) {
+        printf("Usage: cc <file>\n");
+        return 1;
+    }
+
+    str source = read_entire_file(argv[1]);
+    if(!source) {
+        printf("Unable to read file '%s'\n", argv[1]);
+        return 1;
+    }
+
+    Lexer lexer(basename(argv[1]), source);
+    while(lexer.more_tokens()) {
+        auto token = lexer.next_token();
+        printf("%s: %s\n", TOKEN_TYPE_NAME[lexer.token_type(token)], lexer.token_value(token));
+    }
+
     return 0;
 }
