@@ -6,7 +6,7 @@ static_assert(sizeof(u16) == 2);
 static_assert(sizeof(u32) == 4);
 
 
-#define udelay delayMicroseconds
+#define udelay(x) delayMicroseconds(x)
 
 
 void panic(u8 a, u8 b, u8 c) {
