@@ -1,0 +1,17 @@
+EXE         := "cc"
+
+CC          := "g++"
+STD         := "c++20"
+
+WARNINGS    := "-Wsuggest-override -Wno-switch -Wno-parentheses -Wvolatile -Wextra-semi -Wimplicit-fallthrough -Wsequence-point -Wunused"
+INCLUDES    := "-I../vendor/vstd"
+
+CXXFLAGS    := "--std=" + STD + " " + INCLUDES + " " + WARNINGS + " -ftabstop=4 -fmax-errors=15 -nostdinc++ -fno-exceptions -fconcepts-diagnostics-depth=5"
+LDFLAGS     := "-lm -lpthread"
+
+
+all:
+    {{CC}} {{CXXFLAGS}} -o {{EXE}} src/main.cpp {{LDFLAGS}}
+
+clean:
+    rm -f {{EXE}}

@@ -19,24 +19,9 @@
 #include "vstd.hpp"
 
 
-#include "util.cpp"
-#include "ctrl.h"
-#include "isa.h"
-#include "ucode.cpp"
-#include "dasm.cpp"
-#include "emu.cpp"
 
-
-
-void usage() {
-    printf("usage: cputool <file>\n");
-}
 
 s32 main(s32 argc, cstr *argv) {
-    if(argc < 2) {
-        usage();
-        return 1;
-    }
-
-    return emulate(argv[1]);
+    printf("ayyy!\n");
+    return 0;
 }
