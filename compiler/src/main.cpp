@@ -19,8 +19,11 @@
 #include "vstd.hpp"
 
 
+#include "arch.hpp"
 #include "lexer.cpp"
-
+#include "ast.cpp"
+#include "parser.cpp"
+#include "assembler.cpp"
 
 
 
@@ -36,11 +39,7 @@ s32 main(s32 argc, cstr *argv) {
         return 1;
     }
 
-    Lexer lexer(basename(argv[1]), source);
-    while(lexer.more_tokens()) {
-        auto token = lexer.next_token();
-        printf("%s: %s\n", TOKEN_TYPE_NAME[lexer.token_type(token)], lexer.token_value(token));
-    }
-
+    
+    
     return 0;
 }
