@@ -2,22 +2,14 @@ struct Ast {
 
 };
 
-
 struct Ast_Expr : public Ast {};
+struct Ast_Stmt : public Ast {};
+struct Ast_Decl : public Ast_Stmt {};
+
 
 struct Ast_Ident : public Ast_Expr {
     str value;
     Ast_Ident(str _value) : value(_value) {}
-};
-
-struct Ast_String : public Ast_Expr {
-    str value;
-    Ast_String(str _value) : value(_value) {}
-};
-
-struct Ast_Bool : public Ast_Expr {
-    bool value;
-    Ast_Bool(bool _value) : value(_value) {}
 };
 
 struct Ast_Int : public Ast_Expr {
@@ -34,19 +26,8 @@ struct Ast_Binary : public Ast_Expr {
     enum class Op : u8 {
         ADD,
         SUB,
-        LSH,
-        RSH,
-        BIT_AND,
-        BIT_OR,
-        BIT_XOR,
-        AND,
-        OR,
         EQ,
-        NE,
-        LT,
-        GT,
-        LTE,
-        GTE
+        NE
     };
 
     Op op;
@@ -58,3 +39,21 @@ struct Ast_Binary : public Ast_Expr {
 };
 
 
+struct Ast_Struct : public Ast_Decl {
+
+};
+
+struct Ast_Fn : public Ast_Decl {
+
+};
+
+struct Ast_Var : public Ast_Decl {
+
+};
+
+
+struct Ast_File : public Ast {
+    Array<Ast_Struct*> structs;
+    Array<Ast_Fn*> funcs;
+    Array<Ast_Var*> vars;
+};

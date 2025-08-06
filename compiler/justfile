@@ -11,7 +11,7 @@ LDFLAGS     := "-lm -lpthread"
 
 
 all:
-    {{CC}} {{CXXFLAGS}} -o {{EXE}} src/main.cpp {{LDFLAGS}}
+    {{CC}} {{CXXFLAGS}} -o {{EXE}} src/main.cpp {{LDFLAGS}} -g
 
 clean:
     rm -f {{EXE}}

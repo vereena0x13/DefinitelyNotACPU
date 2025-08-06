@@ -5,6 +5,7 @@ struct Label {
     Label(u32 index) : index(index) {}
 };
 
+// TODO: remove duplication from methods that take either a Label* or a u16
 struct Assembler {
     Assembler() {}
 
@@ -103,17 +104,17 @@ private:
     Array<Label> labels;
     Array<Patch> patches;
 
-    void emit(u8 opcode) {
+    inline void emit(u8 opcode) {
         buf.write_u8(opcode);
     }
     
-    void emit(u8 opcode, Label *l) {
+    inline void emit(u8 opcode, Label *l) {
         buf.write_u8(opcode);
         patches.push(Patch(l->index, buf.index));
         buf.write_u16(0);
     }
 
-    void emit(u8 opcode, u16 a) {
+    inline void emit(u8 opcode, u16 a) {
         buf.write_u8(opcode);
         buf.write_u16(a);
     }

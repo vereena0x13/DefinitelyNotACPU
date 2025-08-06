@@ -6,64 +6,25 @@
     X(LBRACK              ) \
     X(RBRACK              ) \
     X(SEMICOLON           ) \
-    X(COLON               ) \
     X(COMMA               ) \
     X(PERIOD              ) \
-    X(QUESTION_MARK       ) \
-    X(INC                 ) \
-    X(DEC                 ) \
+    X(ARROW               ) \
+    X(AMPERSAND           ) \
+    X(STAR                ) \
     X(ADD                 ) \
     X(SUB                 ) \
-    X(MUL                 ) \
-    X(DIV                 ) \
-    X(POW                 ) \
-    X(MOD                 ) \
-    X(LSH                 ) \
-    X(RSH                 ) \
-    X(BIT_NOT             ) \
-    X(BIT_AND             ) \
-    X(BIT_OR              ) \
-    X(BIT_XOR             ) \
-    X(AND                 ) \
-    X(OR                  ) \
-    X(NOT                 ) \
     X(ASSIGN              ) \
     X(ADD_ASSIGN          ) \
     X(SUB_ASSIGN          ) \
-    X(MUL_ASSIGN          ) \
-    X(DIV_ASSIGN          ) \
-    X(POW_ASSIGN          ) \
-    X(MOD_ASSIGN          ) \
-    X(LSH_ASSIGN          ) \
-    X(RSH_ASSIGN          ) \
-    X(BIT_NOT_ASSIGN      ) \
-    X(BIT_AND_ASSIGN      ) \
-    X(BIT_OR_ASSIGN       ) \
-    X(BIT_XOR_ASSIGN      ) \
-    X(AND_ASSIGN          ) \
-    X(OR_ASSIGN           ) \
     X(EQ                  ) \
     X(NE                  ) \
-    X(LT                  ) \
-    X(GT                  ) \
-    X(LTE                 ) \
-    X(GTE                 ) \
     X(IF                  ) \
     X(ELSE                ) \
-    X(BREAK               ) \
-    X(CONTINUE            ) \
-    X(FOR                 ) \
     X(WHILE               ) \
-    X(DO                  ) \
     X(RETURN              ) \
-    X(TRUE                ) \
-    X(FALSE               ) \
-    X(NIL                 ) \
+    X(STRUCT              ) \
     X(INTEGER             ) \
-    X(STRING              ) \
-    X(IDENT               ) \
-    X(SINGLE_LINE_COMMENT ) \
-    X(MULTI_LINE_COMMENT  )
+    X(IDENT               )
 
 
 enum TokenType : u8 {
@@ -286,7 +247,6 @@ private:
     }
 
     inline void emit(TokenType type) {
-        if(type == TT_SINGLE_LINE_COMMENT || type == TT_MULTI_LINE_COMMENT) return; // TODO
         tokens++;
         start_positions.push(SourcePosition(start_line, start_column, start));
         end_positions.push(SourcePosition(line, column, pos-1));
@@ -309,43 +269,25 @@ private:
                 CASE('[', emit(TT_LBRACK))
                 CASE(']', emit(TT_RBRACK))
                 CASE(';', emit(TT_SEMICOLON))
-                CASE(':', emit(TT_COLON))
                 CASE(',', emit(TT_COMMA))
                 CASE('.', emit(TT_PERIOD))
-                CASE('?', emit(TT_QUESTION_MARK))
+                CASE('&', emit(TT_AMPERSAND))
                 CASE('+',
-                    if(accept('+')) {
-                        emit(TT_INC);
-                    } else if(accept('=')) {
-                        emit(TT_ADD_ASSIGN);
-                    } else {
-                        emit(TT_ADD);
-                    }
+                    if(accept('='))         emit(TT_ADD_ASSIGN);
+                    else                    emit(TT_ADD);
                 )
                 CASE('-',
-                    if(accept('-')) {
-                        emit(TT_DEC);
-                    } else if(accept('=')) {
-                        emit(TT_SUB_ASSIGN);
-                    } else {
-                        emit(TT_DEC);
-                    }
+                    if(accept(">"))         emit(TT_ARROW);
+                    else if(accept("="))    emit(TT_SUB_ASSIGN);
+                    else                    emit(TT_SUB);
                 )
-                CASE('*',
-                    if(accept('*')) {
-                        if(accept('=')) emit(TT_POW_ASSIGN);
-                        else            emit(TT_POW);
-                    } else {
-                        if(accept('=')) emit(TT_MUL_ASSIGN);
-                        else            emit(TT_MUL);
-                    }
-                )
+                CASE('*', emit(TT_STAR))
                 CASE('/',
                     if(accept('/')) {
                         while(!accept('\n')) next();
                         line++;
                         column = 1;
-                        emit(TT_SINGLE_LINE_COMMENT);
+                        ignore();
                     } else if(accept('*')) {
                         u32 depth = 1;
 
@@ -366,82 +308,18 @@ private:
                             todo();
                         }
 
-                        emit(TT_MULTI_LINE_COMMENT);
-                    } else if(accept('=')) {
-                        emit(TT_DIV_ASSIGN);
+                        ignore();
                     } else {
-                        emit(TT_DIV);
+                        todo();
                     }
-                )
-                CASE('%',
-                    if(accept('=')) emit(TT_MOD_ASSIGN);
-                    else            emit(TT_MOD);
-                )
-                CASE('<',
-                    if(accept('<')) {
-                        if(accept('=')) emit(TT_LSH_ASSIGN);
-                        else            emit(TT_LSH);
-                    } else {
-                        if(accept('=')) emit(TT_LTE);
-                        else            emit(TT_LT);
-                    }
-                )
-                CASE('>',
-                    if(accept('>')) {
-                        if(accept('=')) emit(TT_RSH_ASSIGN);
-                        else            emit(TT_RSH);
-                    } else {
-                        if(accept('=')) emit(TT_GTE);
-                        else            emit(TT_GT);
-                    }
-                )
-                CASE('~',
-                    if(accept('=')) emit(TT_BIT_NOT_ASSIGN);
-                    else            emit(TT_BIT_NOT);
-                )
-                CASE('&',
-                    if(accept('&')) {
-                        if(accept('=')) emit(TT_AND_ASSIGN);
-                        else            emit(TT_AND);
-                    } else if(accept('=')) {
-                        emit(TT_BIT_AND_ASSIGN);
-                    } else {
-                        emit(TT_BIT_AND);
-                    }
-                )
-                CASE('|',
-                    if(accept('|')) {
-                        if(accept('=')) emit(TT_OR_ASSIGN);
-                        else            emit(TT_OR);
-                    } else if(accept('=')) {
-                        emit(TT_BIT_OR_ASSIGN);
-                    } else {
-                        emit(TT_BIT_OR);
-                    }
-                )
-                CASE('^',
-                    if(accept('=')) emit(TT_BIT_XOR_ASSIGN);
-                    else            emit(TT_BIT_XOR);
                 )
                 CASE('!',
-                    if(accept('=')) {
-                        emit(TT_NE);
-                    } else {
-                        emit(TT_NOT);
-                    }
+                    if(accept('='))     emit(TT_NE);
+                    else                todo();
                 )
                 CASE('=',
-                    if(accept('=')) {
-                        emit(TT_EQ);
-                    } else {
-                        emit(TT_ASSIGN);
-                    }
-                )
-                CASE('"',
-                    parse_string(false);
-                )
-                CASE('@',
-                    todo();                
+                    if(accept('='))     emit(TT_EQ);
+                    else                emit(TT_ASSIGN);
                 )
                 default: {
                     if(is_letter(c) || c == '_') {
@@ -451,14 +329,9 @@ private:
 
                         if(accept_seq("if"))            emit(TT_IF);
                         else if(accept_seq("else"))     emit(TT_ELSE);
-                        else if(accept_seq("break"))    emit(TT_BREAK);
-                        else if(accept_seq("continue")) emit(TT_CONTINUE);
-                        else if(accept_seq("for"))      emit(TT_FOR);
                         else if(accept_seq("while"))    emit(TT_WHILE);
-                        else if(accept_seq("do"))       emit(TT_DO);
                         else if(accept_seq("return"))   emit(TT_RETURN);
-                        else if(accept_seq("true"))     emit(TT_TRUE);
-                        else if(accept_seq("false"))    emit(TT_FALSE);
+                        else if(accept_seq("struct"))   emit(TT_STRUCT);
                         else {
                             while(more() && is_alpha(peek()) || peek() == '_') next();
                             emit(TT_IDENT);
@@ -479,12 +352,6 @@ private:
                 }
             }
         }
-    }
-
-    void parse_string(bool interp) {
-        // TODO
-        while(!accept('"')) next();
-        emit(TT_STRING);
     }
 
     static bool is_letter(char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); }
