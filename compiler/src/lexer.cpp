@@ -6,6 +6,9 @@
     X(LBRACK              ) \
     X(RBRACK              ) \
     X(SEMICOLON           ) \
+    X(COLON               ) \
+    X(COLON_COLON         ) \
+    X(COLON_EQUALS        ) \
     X(COMMA               ) \
     X(PERIOD              ) \
     X(ARROW               ) \
@@ -23,6 +26,7 @@
     X(WHILE               ) \
     X(RETURN              ) \
     X(STRUCT              ) \
+    X(FN                  ) \
     X(INTEGER             ) \
     X(IDENT               )
 
@@ -269,6 +273,11 @@ private:
                 CASE('[', emit(TT_LBRACK))
                 CASE(']', emit(TT_RBRACK))
                 CASE(';', emit(TT_SEMICOLON))
+                CASE(':',
+                    if(accept(":"))         emit(TT_COLON_COLON);
+                    else if(accept("="))    emit(TT_COLON_EQUALS);
+                    else                    todo();
+                )
                 CASE(',', emit(TT_COMMA))
                 CASE('.', emit(TT_PERIOD))
                 CASE('&', emit(TT_AMPERSAND))
@@ -332,6 +341,7 @@ private:
                         else if(accept_seq("while"))    emit(TT_WHILE);
                         else if(accept_seq("return"))   emit(TT_RETURN);
                         else if(accept_seq("struct"))   emit(TT_STRUCT);
+                        else if(accept_seq("fn"))       emit(TT_FN);
                         else {
                             while(more() && is_alpha(peek()) || peek() == '_') next();
                             emit(TT_IDENT);

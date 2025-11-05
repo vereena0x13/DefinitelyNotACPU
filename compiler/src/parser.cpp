@@ -102,8 +102,22 @@ private:
         return mknod(Ast_Int, cast(s32, strtol(v, NULL, 10)));
     }
 
+    Ast_Type* parse_type() {
+        Ast_Type *t = mknod(Ast_Named_Type, parse_ident());
+        while(accept_next(TT_STAR)) t = mknod(Ast_Pointer_Type, t);
+        return t;
+    }
+
     Ast_Struct* parse_struct() {
         todo();
+    }
+
+    Ast_Func* parse_func() {
+        todo();
+    }
+
+    Ast_Decl* parse_decl() {
+        
     }
 
 public:
@@ -111,12 +125,7 @@ public:
         auto n = mknod(Ast_File);
 
         while(more()) {
-            expect(TT_STRUCT, TT_IDENT);
-            if(accept(TT_STRUCT)) {
-                n->structs.push(parse_struct());
-            } else {
-                todo();
-            }
+            n->decls.push(parse_decl());
         }
 
         return n;
